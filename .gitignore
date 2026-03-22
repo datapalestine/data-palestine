@@ -1,0 +1,69 @@
+# ============================================================
+# Data Palestine .gitignore
+# ============================================================
+
+# Environment and secrets
+.env
+.env.local
+.env.production
+.env.*.local
+
+# Data files (raw data stays local and on server, never in git)
+data/
+*.csv
+*.xlsx
+*.xls
+*.zip
+ipi_extracted_data.csv
+!packages/pipeline/tests/fixtures/*.xlsx
+!packages/pipeline/tests/fixtures/*.csv
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.venv/
+venv/
+.pytest_cache/
+
+# Node
+node_modules/
+.next/
+out/
+dist/
+.turbo/
+
+# Build artifacts
+build/
+*.db
+*.sqlite3
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Docker volumes
+pgdata/
+meilidata/
+miniodata/
+
+# Logs
+*.log
+
+# SSH keys
+*.pem
+*.key
+deploy_*
+
+# Test / Coverage
+.coverage
+htmlcov/
+coverage.xml

@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+data/
+*.pyc
+__pycache__
+.venv
+.env
+.env.production
+*.log

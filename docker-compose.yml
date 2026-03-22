@@ -1,0 +1,22 @@
+services:
+  # PostgreSQL with TimescaleDB
+  db:
+    image: timescale/timescaledb-ha:pg16
+    container_name: datapalestine-db
+    environment:
+      POSTGRES_DB: datapalestine
+      POSTGRES_USER: datapal
+      POSTGRES_PASSWORD: datapal_dev_2026
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/home/postgres/pgdata/data
+      - ./packages/db/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U datapal -d datapalestine"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  pgdata:

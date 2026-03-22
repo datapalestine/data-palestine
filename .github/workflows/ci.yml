@@ -1,0 +1,118 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test-api:
+    name: API — Lint & Test
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: timescale/timescaledb-ha:pg16
+        env:
+          POSTGRES_DB: datapalestine_test
+          POSTGRES_USER: datapal
+          POSTGRES_PASSWORD: test_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U datapal -d datapalestine_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: apps/api
+        run: |
+          pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        working-directory: apps/api
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Run tests
+        working-directory: apps/api
+        env:
+          DATABASE_URL: postgresql+asyncpg://datapal:test_password@localhost:5432/datapalestine_test
+          DATABASE_URL_SYNC: postgresql://datapal:test_password@localhost:5432/datapalestine_test
+          REDIS_URL: redis://localhost:6379/0
+          ENVIRONMENT: test
+        run: |
+          pytest --cov=app --cov-report=xml -v
+
+  lint-and-test-web:
+    name: Web — Lint & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Install dependencies
+        working-directory: apps/web
+        run: npm ci
+
+      - name: Lint
+        working-directory: apps/web
+        run: npx biome check .
+
+      - name: Type check
+        working-directory: apps/web
+        run: npx tsc --noEmit
+
+      - name: Build
+        working-directory: apps/web
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:8000
+          NEXT_PUBLIC_SITE_URL: http://localhost:3000
+          NEXT_PUBLIC_MAPBOX_TOKEN: pk.placeholder
+        run: npm run build
+
+  lint-pipeline:
+    name: Pipeline — Lint & Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        working-directory: packages/pipeline
+        run: |
+          pip install -e ".[dev]"
+
+      - name: Lint with ruff
+        working-directory: packages/pipeline
+        run: |
+          ruff check .
+          ruff format --check .
+
+      - name: Run tests
+        working-directory: packages/pipeline
+        run: pytest -v

@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "title": "Data Palestine — Palestinian Open Data Platform",
+    "description": "The definitive open data platform for Palestinian statistical, humanitarian, and socioeconomic data."
+  },
+  "nav": {
+    "home": "Home",
+    "explore": "Data Explorer",
+    "catalog": "Data Catalog",
+    "stories": "Data Stories",
+    "methodology": "Methodology",
+    "developers": "API & Developers",
+    "about": "About",
+    "search": "Search datasets, indicators...",
+    "language": "العربية"
+  },
+  "home": {
+    "hero": {
+      "title": "Palestine in Data",
+      "subtitle": "Comprehensive, open, and accessible data on Palestinian society, economy, and humanitarian conditions.",
+      "searchPlaceholder": "Search for datasets, indicators, or topics...",
+      "exploreButton": "Explore Data",
+      "apiButton": "API Access"
+    },
+    "keyIndicators": {
+      "title": "Key Indicators",
+      "population": "Population",
+      "gdp": "GDP",
+      "unemployment": "Unemployment Rate",
+      "literacy": "Literacy Rate",
+      "displacement": "Displaced Persons",
+      "asOf": "as of {date}",
+      "source": "Source: {source}"
+    },
+    "featuredDatasets": {
+      "title": "Featured Datasets",
+      "viewAll": "View all datasets",
+      "indicators": "{count} indicators",
+      "lastUpdated": "Last updated {date}"
+    },
+    "latestStories": {
+      "title": "Latest Data Stories",
+      "viewAll": "View all stories",
+      "readMore": "Read more"
+    },
+    "stats": {
+      "datasets": "Datasets",
+      "indicators": "Indicators",
+      "observations": "Data Points",
+      "sources": "Sources"
+    }
+  },
+  "explore": {
+    "title": "Data Explorer",
+    "subtitle": "Select a dataset and indicators to explore Palestinian data",
+    "filters": {
+      "dataset": "Dataset",
+      "indicator": "Indicators",
+      "category": "Category",
+      "geography": "Geography",
+      "timeRange": "Time Range",
+      "yearFrom": "From",
+      "yearTo": "To",
+      "source": "Data Source",
+      "apply": "Apply Filters",
+      "clearAll": "Clear all",
+      "selectDataset": "Select a dataset...",
+      "selectIndicator": "Select indicators...",
+      "filtersLabel": "Filters"
+    },
+    "results": {
+      "showing": "Showing {count} observations",
+      "noResults": "No data found matching your filters.",
+      "noSelection": "Select a dataset and indicator to explore data.",
+      "sortBy": "Sort by"
+    },
+    "export": {
+      "title": "Export Data",
+      "csv": "Download CSV",
+      "json": "Download JSON",
+      "excel": "Download Excel",
+      "api": "Copy API URL",
+      "copied": "Copied!"
+    },
+    "chart": {
+      "lineChart": "Line Chart",
+      "barChart": "Bar Chart",
+      "table": "Table",
+      "map": "Map View"
+    },
+    "table": {
+      "timePeriod": "Period",
+      "geography": "Geography",
+      "indicator": "Indicator",
+      "value": "Value",
+      "source": "Source"
+    },
+    "info": {
+      "observations": "{count} observations",
+      "timeRange": "{from} – {to}",
+      "source": "Source: {source}"
+    }
+  },
+  "dataset": {
+    "metadata": "Dataset Metadata",
+    "source": "Source",
+    "methodology": "Methodology",
+    "coverage": "Coverage",
+    "temporal": "Temporal Coverage",
+    "geographic": "Geographic Coverage",
+    "frequency": "Update Frequency",
+    "license": "License",
+    "lastUpdated": "Last Updated",
+    "version": "Version",
+    "indicators": "Indicators in this dataset",
+    "download": "Download Full Dataset",
+    "cite": "Cite this dataset"
+  },
+  "indicator": {
+    "timeSeries": "Time Series",
+    "dataTable": "Data Table",
+    "downloadData": "Download Data",
+    "relatedIndicators": "Related Indicators",
+    "methodology": "About this indicator",
+    "disaggregation": "Disaggregation"
+  },
+  "methodology": {
+    "title": "Methodology",
+    "subtitle": "How we collect, process, and validate data",
+    "sources": "Data Sources",
+    "process": "Data Processing",
+    "quality": "Quality Assurance",
+    "limitations": "Known Limitations",
+    "transparency": "Our commitment to transparency"
+  },
+  "about": {
+    "title": "About Data Palestine",
+    "mission": "Our Mission",
+    "team": "Team",
+    "contact": "Contact",
+    "partners": "Partners",
+    "openSource": "Open Source"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong. Please try again.",
+    "noData": "No data available",
+    "viewMore": "View more",
+    "backTo": "Back to {page}",
+    "share": "Share",
+    "copy": "Copy link",
+    "copied": "Copied!",
+    "westBank": "West Bank",
+    "gazaStrip": "Gaza Strip",
+    "palestine": "Palestine",
+    "male": "Male",
+    "female": "Female",
+    "total": "Total"
+  },
+  "footer": {
+    "tagline": "Open data for Palestine. Free. Transparent. Accessible.",
+    "dataAccess": "Data Access",
+    "resources": "Resources",
+    "organization": "Organization",
+    "copyright": "© {year} Data Palestine. Data is provided under {license}.",
+    "builtWith": "Built with open-source tools",
+    "github": "GitHub"
+  }
+}

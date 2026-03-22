@@ -1,0 +1,169 @@
+{
+  "metadata": {
+    "title": "بيانات فلسطين — منصة البيانات المفتوحة الفلسطينية",
+    "description": "المنصة المرجعية للبيانات الإحصائية والإنسانية والاجتماعية والاقتصادية الفلسطينية."
+  },
+  "nav": {
+    "home": "الرئيسية",
+    "explore": "مستكشف البيانات",
+    "catalog": "كتالوج البيانات",
+    "stories": "قصص البيانات",
+    "methodology": "المنهجية",
+    "developers": "واجهة برمجة التطبيقات",
+    "about": "حول",
+    "search": "ابحث في مجموعات البيانات والمؤشرات...",
+    "language": "English"
+  },
+  "home": {
+    "hero": {
+      "title": "فلسطين في أرقام",
+      "subtitle": "بيانات شاملة ومفتوحة وسهلة الوصول عن المجتمع الفلسطيني والاقتصاد والأوضاع الإنسانية.",
+      "searchPlaceholder": "ابحث عن مجموعات البيانات أو المؤشرات أو المواضيع...",
+      "exploreButton": "استكشف البيانات",
+      "apiButton": "الوصول عبر API"
+    },
+    "keyIndicators": {
+      "title": "المؤشرات الرئيسية",
+      "population": "عدد السكان",
+      "gdp": "الناتج المحلي الإجمالي",
+      "unemployment": "معدل البطالة",
+      "literacy": "معدل محو الأمية",
+      "displacement": "النازحين",
+      "asOf": "حتى {date}",
+      "source": "المصدر: {source}"
+    },
+    "featuredDatasets": {
+      "title": "مجموعات بيانات مميزة",
+      "viewAll": "عرض جميع مجموعات البيانات",
+      "indicators": "{count} مؤشر",
+      "lastUpdated": "آخر تحديث {date}"
+    },
+    "latestStories": {
+      "title": "أحدث قصص البيانات",
+      "viewAll": "عرض جميع القصص",
+      "readMore": "اقرأ المزيد"
+    },
+    "stats": {
+      "datasets": "مجموعات بيانات",
+      "indicators": "مؤشرات",
+      "observations": "نقاط بيانات",
+      "sources": "مصادر"
+    }
+  },
+  "explore": {
+    "title": "مستكشف البيانات",
+    "subtitle": "اختر مجموعة بيانات ومؤشرات لاستكشاف البيانات الفلسطينية",
+    "filters": {
+      "dataset": "مجموعة البيانات",
+      "indicator": "المؤشرات",
+      "category": "الفئة",
+      "geography": "الجغرافيا",
+      "timeRange": "النطاق الزمني",
+      "yearFrom": "من",
+      "yearTo": "إلى",
+      "source": "مصدر البيانات",
+      "apply": "تطبيق",
+      "clearAll": "مسح الكل",
+      "selectDataset": "اختر مجموعة بيانات...",
+      "selectIndicator": "اختر المؤشرات...",
+      "filtersLabel": "المرشحات"
+    },
+    "results": {
+      "showing": "عرض {count} ملاحظة",
+      "noResults": "لم يتم العثور على بيانات تطابق المرشحات.",
+      "noSelection": "اختر مجموعة بيانات ومؤشر لاستكشاف البيانات.",
+      "sortBy": "ترتيب حسب"
+    },
+    "export": {
+      "title": "تصدير البيانات",
+      "csv": "تحميل CSV",
+      "json": "تحميل JSON",
+      "excel": "تحميل Excel",
+      "api": "نسخ رابط API",
+      "copied": "تم النسخ!"
+    },
+    "chart": {
+      "lineChart": "مخطط خطي",
+      "barChart": "مخطط شريطي",
+      "table": "جدول",
+      "map": "عرض الخريطة"
+    },
+    "table": {
+      "timePeriod": "الفترة",
+      "geography": "الجغرافيا",
+      "indicator": "المؤشر",
+      "value": "القيمة",
+      "source": "المصدر"
+    },
+    "info": {
+      "observations": "{count} ملاحظة",
+      "timeRange": "{from} – {to}",
+      "source": "المصدر: {source}"
+    }
+  },
+  "dataset": {
+    "metadata": "بيانات وصفية",
+    "source": "المصدر",
+    "methodology": "المنهجية",
+    "coverage": "التغطية",
+    "temporal": "التغطية الزمنية",
+    "geographic": "التغطية الجغرافية",
+    "frequency": "تكرار التحديث",
+    "license": "الرخصة",
+    "lastUpdated": "آخر تحديث",
+    "version": "الإصدار",
+    "indicators": "المؤشرات في مجموعة البيانات هذه",
+    "download": "تحميل مجموعة البيانات الكاملة",
+    "cite": "الاستشهاد بمجموعة البيانات هذه"
+  },
+  "indicator": {
+    "timeSeries": "سلسلة زمنية",
+    "dataTable": "جدول البيانات",
+    "downloadData": "تحميل البيانات",
+    "relatedIndicators": "مؤشرات ذات صلة",
+    "methodology": "حول هذا المؤشر",
+    "disaggregation": "التصنيف"
+  },
+  "methodology": {
+    "title": "المنهجية",
+    "subtitle": "كيف نجمع البيانات ونعالجها ونتحقق منها",
+    "sources": "مصادر البيانات",
+    "process": "معالجة البيانات",
+    "quality": "ضمان الجودة",
+    "limitations": "القيود المعروفة",
+    "transparency": "التزامنا بالشفافية"
+  },
+  "about": {
+    "title": "حول بيانات فلسطين",
+    "mission": "مهمتنا",
+    "team": "الفريق",
+    "contact": "اتصل بنا",
+    "partners": "الشركاء",
+    "openSource": "مفتوح المصدر"
+  },
+  "common": {
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ ما. يرجى المحاولة مرة أخرى.",
+    "noData": "لا تتوفر بيانات",
+    "viewMore": "عرض المزيد",
+    "backTo": "العودة إلى {page}",
+    "share": "مشاركة",
+    "copy": "نسخ الرابط",
+    "copied": "تم النسخ!",
+    "westBank": "الضفة الغربية",
+    "gazaStrip": "قطاع غزة",
+    "palestine": "فلسطين",
+    "male": "ذكر",
+    "female": "أنثى",
+    "total": "المجموع"
+  },
+  "footer": {
+    "tagline": "بيانات مفتوحة لفلسطين. مجانية. شفافة. سهلة الوصول.",
+    "dataAccess": "الوصول للبيانات",
+    "resources": "الموارد",
+    "organization": "المؤسسة",
+    "copyright": "© {year} بيانات فلسطين. البيانات متاحة بموجب {license}.",
+    "builtWith": "بُنيت بأدوات مفتوحة المصدر",
+    "github": "GitHub"
+  }
+}
