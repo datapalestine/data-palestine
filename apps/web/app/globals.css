@@ -68,6 +68,18 @@ h1, h2, h3, h4 {
   }
 }
 
+/* Right info panel: hidden on mobile, visible on desktop */
+.explorer-info-panel {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .explorer-info-panel {
+    display: block;
+    width: 240px;
+    flex-shrink: 0;
+  }
+}
+
 /* Mobile filter toggle: hide on desktop */
 .explorer-mobile-toggle {
   display: flex;
