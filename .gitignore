@@ -9,7 +9,10 @@
 .env.*.local
 
 # Data files (raw data stays local and on server, never in git)
-data/
+# Note: use specific paths to avoid matching apps/web/components/data/
+/data/
+pipelines/data/
+apps/api/data/
 *.csv
 *.xlsx
 *.xls
