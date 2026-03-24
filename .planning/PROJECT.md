@@ -27,12 +27,12 @@ Researchers, journalists, and policymakers can explore and download reliable Pal
 - ✓ Docker Compose setup for local development and production — existing
 - ✓ CI pipeline with linting, testing, and deployment workflows — existing
 - ✓ About, Methodology, and Developers pages — existing
+- ✓ Charts cap at 5 indicators with overflow badge, institutional styling — Phase 1
+- ✓ Professional chart rendering (muted gridlines, K/M/B axes, source attribution) — Phase 1
+- ✓ Development disclaimer banner on Data Explorer (dismissible per session) — Phase 1
 
 ### Active
 
-- [ ] Fix charts to handle many indicators gracefully (cap at 5 visible)
-- [ ] Professional institutional-quality chart styling (World Bank / UN data portal level)
-- [ ] Development disclaimer banner on Data Explorer page
 - [ ] Post-MVP: Comprehensive data cleanup and wrangling for professional-grade accuracy
 
 ### Out of Scope
@@ -48,8 +48,8 @@ Researchers, journalists, and policymakers can explore and download reliable Pal
 
 ## Context
 
-- This is a brownfield project nearing MVP launch. The core platform is functional.
-- Charts (line + bar) break visually when many indicators are selected — legends consume the entire chart area, no actual chart renders.
+- MVP is ready for launch. Phase 1 (chart fix and explorer polish) is complete.
+- Charts now cap at 5 visible indicators with professional institutional styling.
 - The explore page's left panel shows messy indicator names due to unclean source data — acceptable for MVP, will be addressed in data cleanup phase.
 - Data comes from multiple sources with varying quality — PCBS data especially needs cleanup (indicator naming, categorization, deduplication).
 - The platform should feel like a data institution (World Bank, UN OCHA), not an advocacy campaign.
@@ -92,4 +92,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-24 after initialization*
+*Last updated: 2026-03-24 after Phase 1 completion*
