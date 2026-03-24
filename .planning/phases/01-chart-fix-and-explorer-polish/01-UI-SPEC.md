@@ -49,20 +49,22 @@ Exceptions: `ResponsiveContainer` height is fixed at 320px (not a spacing scale 
 
 All type uses `font-family: var(--font-sans)` (IBM Plex Sans / IBM Plex Arabic). Western Arabic numerals (0–9) in both locales.
 
+Four sizes maximum — collapsed from original 5 by merging 12px into 11px and 13px into 14px:
+
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
-| Body (table cells, filter labels) | 14px | 400 | 1.5 |
-| Label (axis ticks, legend names, attribution) | 11px | 400 | 1.4 |
-| Heading (chart section headings, banner title) | 16px | 600 | 1.3 |
-| Display | Not used in this phase | — | — |
+| Label (axis ticks, legend names, attribution, tooltip header, overflow badge) | 11px | 400 | 1.4 |
+| Body (table cells, filter labels, disclaimer body) | 14px | 400 | 1.5 |
+| Heading (chart section headings, banner title, tooltip value) | 14px | 600 | 1.3 |
+| Large heading (page-level headings) | 16px | 600 | 1.3 |
 
 Specific overrides:
 - Axis tick labels (`XAxis`, `YAxis`): 11px, fill `#757575`, `fontFamily: "inherit"`
 - Custom tooltip header (period label): 11px, `#757575`, weight 400
-- Custom tooltip value: 13px, `#212121`, weight 600
+- Custom tooltip value: **14px**, `#212121`, weight **600** (merged up from 13px)
 - Legend item names: 11px, `#4B5563` (Tailwind `text-neutral-600` equivalent), truncated at 180px with `title` attribute for full name
 - Disclaimer banner body text: 14px, weight 400
-- Overflow badge text ("Showing 5 of N"): 12px, `#757575`, weight 400
+- Overflow badge text ("Showing 5 of N"): **11px**, `#757575`, weight **400** (merged down from 12px)
 
 ---
 
@@ -108,6 +110,12 @@ Source: `CHART_COLORS` constant in `DataExplorer.tsx` (first 5 of 8 entries). Se
 
 ---
 
+## Visual Focal Point
+
+The chart area (`ResponsiveContainer` at 320px height) is the primary visual anchor of the Data Explorer. All surrounding elements — filter panel, legend, overflow badge, attribution, and disclaimer banner — are secondary. Layout and visual weight must direct the user's eye to the chart first. The filter sidebar occupies the left column; the chart card occupies the remaining two-thirds, positioned at the top of the results area.
+
+---
+
 ## Component Contracts
 
 ### ChartLegend (new component)
@@ -131,7 +139,7 @@ Source: `CHART_COLORS` constant in `DataExplorer.tsx` (first 5 of 8 entries). Se
 
 **Copy:** `Showing 5 of {N} indicators — select fewer to compare all`
 
-**Visual contract:** 12px, `#757575`, no background, no border, `mt-1 px-4`
+**Visual contract:** 11px, `#757575`, no background, no border, `mt-1 px-4`
 
 ### Chart container layout
 
@@ -190,7 +198,7 @@ else  → locale string, 0 decimal
 **Custom tooltip:**
 - Background: `#FFFFFF`, border: `1px solid #E0E0E0`, border-radius: 4px, no shadow
 - Period label: 11px, `#757575`, weight 400, displayed at top
-- Each series row: colored dot (8px circle, series color) + indicator name (11px, truncated 20 chars) + value (13px, `#212121`, weight 600)
+- Each series row: colored dot (8px circle, series color) + indicator name (11px, truncated 20 chars) + value (**14px**, `#212121`, weight **600**)
 - Cursor: `{ stroke: "#E0E0E0", strokeWidth: 1 }`
 
 **Bar chart specific:** `barSize={24}` for single series; `barSize={16}` for 2–5 series (prevents bars touching). Bar `radius={[2, 2, 0, 0]}` (2px top corner rounding).
@@ -253,11 +261,13 @@ else  → locale string, 0 decimal
 | Overflow badge | "Showing 5 of {N} indicators — select fewer to compare all" |
 | Source attribution | "Source: {source_name}" |
 | Empty state (no dataset selected) | "Select a dataset and indicator to explore data." (existing, `explore.results.noSelection`) |
-| Empty state (filters return nothing) | "No data found matching your filters." (existing, `explore.results.noResults`) |
-| Error state (API failure) | "Something went wrong. Please try again." (existing, `common.error`) |
+| Empty state (filters return nothing) | "No data found matching your filters. Try expanding the date range or selecting a different geography." (existing key `explore.results.noResults` — update copy) |
+| Error state (API failure) | "Unable to load chart data. Check your connection and try again, or refresh the page." (new key `explore.results.chartError` — replaces generic `common.error` for chart context) |
 | Chart loading | Skeleton only — no text (chart area shows gray skeleton, not a spinner) |
 
 No destructive actions exist in this phase. No confirmation dialogs needed.
+
+**Error state rationale:** The generic `common.error` key ("Something went wrong. Please try again.") has no solution path. The chart-specific error key names the failing component (chart data) and provides two concrete next steps (check connection, refresh). The `common.error` key is preserved for non-chart contexts.
 
 ---
 
@@ -347,8 +357,8 @@ No third-party component registry blocks are used or added in this phase. All ne
 | `apps/web/components/charts/BarChartView.tsx` | CREATE | Extracted from DataExplorer, bounded series |
 | `apps/web/components/data/ExplorerDisclaimer.tsx` | CREATE | Dismissible banner component |
 | `apps/web/components/data/DataExplorer.tsx` | MODIFY | Add cap logic, remove auto-select-all, wire new components |
-| `apps/web/messages/en.json` | MODIFY | Add `explore.disclaimer.*` keys |
-| `apps/web/messages/ar.json` | MODIFY | Add `explore.disclaimer.*` keys (Arabic) |
+| `apps/web/messages/en.json` | MODIFY | Add `explore.disclaimer.*` keys and `explore.results.chartError` key |
+| `apps/web/messages/ar.json` | MODIFY | Add `explore.disclaimer.*` keys (Arabic) and `explore.results.chartError` key (Arabic) |
 | `apps/web/lib/constants.ts` | MODIFY | Add `MAX_CHART_SERIES = 5` |
 
 ---
