@@ -9,9 +9,9 @@ Requirements for MVP launch. Each maps to roadmap phases.
 
 ### Chart Rendering
 
-- [ ] **CHART-01**: User can view line chart with up to 5 indicators rendered correctly (no legend overflow, actual lines visible)
-- [ ] **CHART-02**: User can view bar chart with up to 5 indicators rendered correctly (no legend overflow, actual bars visible)
-- [ ] **CHART-03**: When more than 5 indicators are selected, charts display only the first 5 with a clear indication that others are hidden
+- [x] **CHART-01**: User can view line chart with up to 5 indicators rendered correctly (no legend overflow, actual lines visible)
+- [x] **CHART-02**: User can view bar chart with up to 5 indicators rendered correctly (no legend overflow, actual bars visible)
+- [x] **CHART-03**: When more than 5 indicators are selected, charts display only the first 5 with a clear indication that others are hidden
 - [x] **CHART-04**: Chart legend renders outside the SVG container with fixed max-height, never consuming chart area
 
 ### Chart Styling
@@ -61,9 +61,9 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| CHART-01 | Phase 1 | Pending |
-| CHART-02 | Phase 1 | Pending |
-| CHART-03 | Phase 1 | Pending |
+| CHART-01 | Phase 1 | Complete |
+| CHART-02 | Phase 1 | Complete |
+| CHART-03 | Phase 1 | Complete |
 | CHART-04 | Phase 1 | Complete |
 | STYLE-01 | Phase 1 | Complete |
 | STYLE-02 | Phase 1 | Complete |

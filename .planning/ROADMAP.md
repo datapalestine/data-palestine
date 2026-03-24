@@ -28,7 +28,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans:** 1/2 plans executed
 Plans:
 - [x] 01-01-PLAN.md — Create new chart components (ChartLegend, LineChartView, BarChartView), ExplorerDisclaimer, constants, and i18n keys
-- [ ] 01-02-PLAN.md — Wire components into DataExplorer with cap logic, auto-select fix, and visual verification
+- [x] 01-02-PLAN.md — Wire components into DataExplorer with cap logic, auto-select fix, and visual verification
 **UI hint**: yes
 
 ## Progress
