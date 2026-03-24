@@ -34,6 +34,7 @@ export default async function ExplorePage({
       noResults: t("results.noResults"),
       noSelection: t("results.noSelection"),
       sortBy: t("results.sortBy"),
+      chartError: t("results.chartError"),
     },
     export: {
       title: t("export.title"),
@@ -48,6 +49,8 @@ export default async function ExplorePage({
       barChart: t("chart.barChart"),
       table: t("chart.table"),
       map: t("chart.map"),
+      overflowBadge: t.raw("chart.overflowBadge"),
+      source: t.raw("chart.source"),
     },
     table: {
       timePeriod: t("table.timePeriod"),

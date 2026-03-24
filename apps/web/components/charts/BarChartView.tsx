@@ -2,7 +2,7 @@
 
 import dynamic from "next/dynamic";
 import { ChartLegend } from "./ChartLegend";
-import type { TooltipProps } from "recharts";
+import type { TooltipContentProps } from "recharts";
 
 // Lazy-load recharts to avoid SSR issues
 const BarChart = dynamic(
@@ -44,7 +44,7 @@ function formatAxisValue(n: number): string {
 }
 
 // ─── Custom tooltip ──────────────────────────────────────────────────────────
-interface CustomTooltipProps extends TooltipProps<number, string> {
+interface CustomTooltipProps extends TooltipContentProps<number, string> {
   colors: readonly string[];
   series: string[];
 }
@@ -66,12 +66,13 @@ function CustomTooltip({ active, payload, label, colors, series }: CustomTooltip
         {label}
       </p>
       {payload.map((entry, i) => {
-        const seriesIndex = series.indexOf(entry.name ?? "");
+        const entryName = String(entry.name ?? "");
+        const seriesIndex = series.indexOf(entryName);
         const color = seriesIndex >= 0 ? colors[seriesIndex % colors.length] : entry.color;
         const truncatedName =
-          (entry.name ?? "").length > 20
-            ? `${(entry.name ?? "").slice(0, 20)}…`
-            : (entry.name ?? "");
+          entryName.length > 20
+            ? `${entryName.slice(0, 20)}…`
+            : entryName;
         return (
           <div key={i} style={{ display: "flex", alignItems: "center", gap: "6px", marginTop: "4px" }}>
             <span
@@ -88,7 +89,7 @@ function CustomTooltip({ active, payload, label, colors, series }: CustomTooltip
             <span style={{ fontSize: "14px", color: "#212121", fontWeight: 600, marginLeft: "8px" }}>
               {typeof entry.value === "number"
                 ? entry.value.toLocaleString("en-US", { maximumFractionDigits: 2 })
-                : entry.value}
+                : String(entry.value ?? "")}
             </span>
           </div>
         );
@@ -136,7 +137,7 @@ export function BarChartView({ data, series, colors, locale: _locale }: BarChart
           <Tooltip
             content={(props) => (
               <CustomTooltip
-                {...(props as TooltipProps<number, string>)}
+                {...(props as TooltipContentProps<number, string>)}
                 colors={colors}
                 series={series}
               />

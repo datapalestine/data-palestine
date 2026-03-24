@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import dynamic from "next/dynamic";
 import {
   fetchDatasets,
   fetchDataset,
@@ -18,48 +17,10 @@ import type {
   Geography,
   IndicatorRef,
 } from "@/lib/api-client";
-
-// Lazy-load recharts to avoid SSR issues
-const LineChart = dynamic(
-  () => import("recharts").then((m) => m.LineChart),
-  { ssr: false },
-);
-const BarChart = dynamic(
-  () => import("recharts").then((m) => m.BarChart),
-  { ssr: false },
-);
-const ResponsiveContainer = dynamic(
-  () => import("recharts").then((m) => m.ResponsiveContainer),
-  { ssr: false },
-);
-const Line = dynamic(() => import("recharts").then((m) => m.Line), {
-  ssr: false,
-});
-const Bar = dynamic(() => import("recharts").then((m) => m.Bar), {
-  ssr: false,
-});
-const XAxis = dynamic(() => import("recharts").then((m) => m.XAxis), {
-  ssr: false,
-});
-const YAxis = dynamic(() => import("recharts").then((m) => m.YAxis), {
-  ssr: false,
-});
-const CartesianGrid = dynamic(
-  () => import("recharts").then((m) => m.CartesianGrid),
-  { ssr: false },
-);
-const Tooltip = dynamic(() => import("recharts").then((m) => m.Tooltip), {
-  ssr: false,
-});
-const Legend = dynamic(() => import("recharts").then((m) => m.Legend), {
-  ssr: false,
-});
-
-// ─── Constants ──────────────────────────────────────────
-const CHART_COLORS = [
-  "#2E7D32", "#1565C0", "#EF6C00", "#6A1B9A",
-  "#C62828", "#00838F", "#4E342E", "#37474F",
-];
+import { LineChartView } from "@/components/charts/LineChartView";
+import { BarChartView } from "@/components/charts/BarChartView";
+import { ExplorerDisclaimer } from "@/components/data/ExplorerDisclaimer";
+import { MAX_CHART_SERIES, CHART_COLORS } from "@/lib/constants";
 
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
@@ -109,9 +70,9 @@ interface T {
     selectIndicator: string;
     filtersLabel: string;
   };
-  results: { showing: string; noResults: string; noSelection: string; sortBy: string };
+  results: { showing: string; noResults: string; noSelection: string; sortBy: string; chartError: string };
   export: { title: string; csv: string; json: string; excel: string; api: string; copied: string };
-  chart: { lineChart: string; barChart: string; table: string; map: string };
+  chart: { lineChart: string; barChart: string; table: string; map: string; overflowBadge: string; source: string };
   table: { timePeriod: string; geography: string; indicator: string; value: string; source: string };
   info: { observations: string; timeRange: string; source: string };
 }
@@ -187,8 +148,8 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
       setDatasetDetail(detail.data);
       setGeoTree(geos.data);
 
-      // Auto-select ALL indicators + all geographies + auto-apply
-      const allInds = detail.data.indicators.map((i: { id: number }) => String(i.id));
+      // Auto-select first 3 indicators + all geographies + auto-apply
+      const allInds = detail.data.indicators.slice(0, 3).map((i: { id: number }) => String(i.id));
       const allGeos: string[] = [];
       function walkGeos(nodes: Geography[]) {
         for (const n of nodes) { allGeos.push(n.code); if (n.children) walkGeos(n.children); }
@@ -382,6 +343,11 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
     }
     return [...keys];
   }, [chartData]);
+
+  const visibleSeries = useMemo(
+    () => seriesNames.slice(0, MAX_CHART_SERIES),
+    [seriesNames]
+  );
 
   // ─── Copy API URL ─────────────────────────────────────
   const handleCopyApi = useCallback(() => {
@@ -620,6 +586,10 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
         {/* ═══ CENTER — TABLE/CHART ═══ */}
         <main className="min-w-0 flex-1" style={{ maxHeight: "100%", display: "flex", flexDirection: "column" }}>
           <div style={{ display: "flex", flexDirection: "column", height: "100%" }}>
+              {/* ── Disclaimer banner ── */}
+              <div className="shrink-0 mb-3">
+                <ExplorerDisclaimer />
+              </div>
               {/* ── Tab bar ── */}
               <div className="flex rounded-lg border border-neutral-200 bg-white p-1 shrink-0">
                 {(["table", "line", "bar"] as const).map((tab) => {
@@ -757,38 +727,47 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
                   </div>
                 ) : (
                   <div className="rounded-lg border border-neutral-200 bg-white p-4">
-                    <ResponsiveContainer width="100%" height={400}>
-                      <LineChart data={chartData}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                        <XAxis dataKey="period" tick={{ fontSize: 11 }} />
-                        <YAxis tick={{ fontSize: 11 }} width={80} />
-                        <Tooltip />
-                        <Legend />
-                        {seriesNames.map((name, i) => (
-                          <Line key={name} type="monotone" dataKey={name}
-                            stroke={CHART_COLORS[i % CHART_COLORS.length]}
-                            strokeWidth={2} dot={{ r: 2 }} activeDot={{ r: 4 }} />
-                        ))}
-                      </LineChart>
-                    </ResponsiveContainer>
+                    {seriesNames.length > MAX_CHART_SERIES && (
+                      <p className="mt-1 px-4 text-[11px] text-[#757575]">
+                        {locale === "ar"
+                          ? `عرض 5 من ${seriesNames.length} مؤشر — اختر أقل للمقارنة الكاملة`
+                          : `Showing 5 of ${seriesNames.length} indicators — select fewer to compare all`}
+                      </p>
+                    )}
+                    <LineChartView
+                      data={chartData}
+                      series={visibleSeries}
+                      colors={CHART_COLORS}
+                      locale={locale}
+                    />
+                    {datasetDetail?.source?.organization && (
+                      <p className="mt-2 px-4 pb-3 text-[11px] font-normal text-[#757575]">
+                        {locale === "ar" ? `المصدر: ${datasetDetail.source.organization}` : `Source: ${datasetDetail.source.organization}`}
+                      </p>
+                    )}
                   </div>
                 )
               ) : (
                 /* BAR CHART */
                 <div className="rounded-lg border border-neutral-200 bg-white p-4">
-                  <ResponsiveContainer width="100%" height={400}>
-                    <BarChart data={chartData}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
-                      <XAxis dataKey="period" tick={{ fontSize: 11 }} />
-                      <YAxis tick={{ fontSize: 11 }} width={80} />
-                      <Tooltip />
-                      <Legend />
-                      {seriesNames.map((name, i) => (
-                        <Bar key={name} dataKey={name}
-                          fill={CHART_COLORS[i % CHART_COLORS.length]} />
-                      ))}
-                    </BarChart>
-                  </ResponsiveContainer>
+                  {seriesNames.length > MAX_CHART_SERIES && (
+                    <p className="mt-1 px-4 text-[11px] text-[#757575]">
+                      {locale === "ar"
+                        ? `عرض 5 من ${seriesNames.length} مؤشر — اختر أقل للمقارنة الكاملة`
+                        : `Showing 5 of ${seriesNames.length} indicators — select fewer to compare all`}
+                    </p>
+                  )}
+                  <BarChartView
+                    data={chartData}
+                    series={visibleSeries}
+                    colors={CHART_COLORS}
+                    locale={locale}
+                  />
+                  {datasetDetail?.source?.organization && (
+                    <p className="mt-2 px-4 pb-3 text-[11px] font-normal text-[#757575]">
+                      {locale === "ar" ? `المصدر: ${datasetDetail.source.organization}` : `Source: ${datasetDetail.source.organization}`}
+                    </p>
+                  )}
                 </div>
               )}
 
