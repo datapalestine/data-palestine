@@ -72,7 +72,8 @@
       "showing": "Showing {count} observations",
       "noResults": "No data found matching your filters.",
       "noSelection": "Select a dataset and indicator to explore data.",
-      "sortBy": "Sort by"
+      "sortBy": "Sort by",
+      "chartError": "Unable to load chart data. Check your connection and try again, or refresh the page."
     },
     "export": {
       "title": "Export Data",
@@ -86,7 +87,9 @@
       "lineChart": "Line Chart",
       "barChart": "Bar Chart",
       "table": "Table",
-      "map": "Map View"
+      "map": "Map View",
+      "overflowBadge": "Showing 5 of {count} indicators — select fewer to compare all",
+      "source": "Source: {source}"
     },
     "table": {
       "timePeriod": "Period",
@@ -99,6 +102,11 @@
       "observations": "{count} observations",
       "timeRange": "{from} – {to}",
       "source": "Source: {source}"
+    },
+    "disclaimer": {
+      "title": "Data Explorer — Early Access",
+      "body": "Some indicators may have incomplete or unverified values. We are actively improving data quality.",
+      "dismiss": "Dismiss notice"
     }
   },
   "dataset": {

@@ -47,3 +47,10 @@ export const LOCALES = ["en", "ar"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 export const DEFAULT_LOCALE: Locale = "ar";
+
+export const MAX_CHART_SERIES = 5;
+
+export const CHART_COLORS = [
+  "#2E7D32", "#1565C0", "#EF6C00", "#6A1B9A",
+  "#C62828", "#00838F", "#4E342E", "#37474F",
+] as const;
