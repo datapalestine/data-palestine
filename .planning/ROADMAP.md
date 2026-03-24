@@ -25,9 +25,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. When more than 5 indicators are selected, charts display only the first 5 and show a clear indication that others are hidden
   3. Charts display with clean institutional styling: muted gridlines, no border clutter, abbreviated Y-axis labels, correct color palette, and source attribution below the chart
   4. A dismissible development disclaimer banner appears at the top of the Data Explorer page and stays dismissed for the rest of the session
-**Plans:** 2 plans
+**Plans:** 1/2 plans executed
 Plans:
-- [ ] 01-01-PLAN.md — Create new chart components (ChartLegend, LineChartView, BarChartView), ExplorerDisclaimer, constants, and i18n keys
+- [x] 01-01-PLAN.md — Create new chart components (ChartLegend, LineChartView, BarChartView), ExplorerDisclaimer, constants, and i18n keys
 - [ ] 01-02-PLAN.md — Wire components into DataExplorer with cap logic, auto-select fix, and visual verification
 **UI hint**: yes
 
@@ -38,4 +38,4 @@ Phases execute in numeric order: 1
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Chart Fix and Explorer Polish | 0/2 | Not started | - |
+| 1. Chart Fix and Explorer Polish | 1/2 | In Progress|  |

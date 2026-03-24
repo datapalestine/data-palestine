@@ -12,19 +12,19 @@ Requirements for MVP launch. Each maps to roadmap phases.
 - [ ] **CHART-01**: User can view line chart with up to 5 indicators rendered correctly (no legend overflow, actual lines visible)
 - [ ] **CHART-02**: User can view bar chart with up to 5 indicators rendered correctly (no legend overflow, actual bars visible)
 - [ ] **CHART-03**: When more than 5 indicators are selected, charts display only the first 5 with a clear indication that others are hidden
-- [ ] **CHART-04**: Chart legend renders outside the SVG container with fixed max-height, never consuming chart area
+- [x] **CHART-04**: Chart legend renders outside the SVG container with fixed max-height, never consuming chart area
 
 ### Chart Styling
 
-- [ ] **STYLE-01**: Charts use clean, institutional styling — muted gridlines, professional axis labels, no chart border clutter
-- [ ] **STYLE-02**: Y-axis tick labels use abbreviated number formatting (K/M/B) to prevent label clipping
-- [ ] **STYLE-03**: Charts use the project's defined chart color palette (#2E7D32, #1565C0, #EF6C00, #6A1B9A, #C62828, #00838F)
-- [ ] **STYLE-04**: Source attribution line displays below charts showing the data source name
+- [x] **STYLE-01**: Charts use clean, institutional styling — muted gridlines, professional axis labels, no chart border clutter
+- [x] **STYLE-02**: Y-axis tick labels use abbreviated number formatting (K/M/B) to prevent label clipping
+- [x] **STYLE-03**: Charts use the project's defined chart color palette (#2E7D32, #1565C0, #EF6C00, #6A1B9A, #C62828, #00838F)
+- [x] **STYLE-04**: Source attribution line displays below charts showing the data source name
 
 ### Data Explorer UX
 
-- [ ] **UX-01**: Development disclaimer banner appears at the top of the Data Explorer page indicating data is still being refined
-- [ ] **UX-02**: Disclaimer banner is dismissible per session (localStorage)
+- [x] **UX-01**: Development disclaimer banner appears at the top of the Data Explorer page indicating data is still being refined
+- [x] **UX-02**: Disclaimer banner is dismissible per session (localStorage)
 
 ## v2 Requirements
 
@@ -64,13 +64,13 @@ Which phases cover which requirements. Updated during roadmap creation.
 | CHART-01 | Phase 1 | Pending |
 | CHART-02 | Phase 1 | Pending |
 | CHART-03 | Phase 1 | Pending |
-| CHART-04 | Phase 1 | Pending |
-| STYLE-01 | Phase 1 | Pending |
-| STYLE-02 | Phase 1 | Pending |
-| STYLE-03 | Phase 1 | Pending |
-| STYLE-04 | Phase 1 | Pending |
-| UX-01 | Phase 1 | Pending |
-| UX-02 | Phase 1 | Pending |
+| CHART-04 | Phase 1 | Complete |
+| STYLE-01 | Phase 1 | Complete |
+| STYLE-02 | Phase 1 | Complete |
+| STYLE-03 | Phase 1 | Complete |
+| STYLE-04 | Phase 1 | Complete |
+| UX-01 | Phase 1 | Complete |
+| UX-02 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 10 total
