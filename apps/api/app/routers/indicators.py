@@ -4,6 +4,7 @@ from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
+from app.routers import localized
 from app.schemas.common import paginate
 
 router = APIRouter()
@@ -84,20 +85,18 @@ async def list_indicators(
         params.extend([per_page, (page - 1) * per_page])
         rows = await conn.fetch(data_sql, *params)
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-
     data = []
     for r in rows:
         item = {
             "id": r["id"],
             "code": r["code"],
-            "name": r[name_key],
-            "description": r[f"description_{lang}"] if lang in ("en", "ar") else r["description_en"],
+            "name": localized(r, "name", lang),
+            "description": localized(r, "description", lang),
             "dataset": {
                 "slug": r["dataset_slug"],
-                "name": r[f"dataset_name_{lang}"] if lang in ("en", "ar") else r["dataset_name_en"],
+                "name": localized(r, "dataset_name", lang),
             },
-            "unit": r[f"unit_{lang}"] if lang in ("en", "ar") else r["unit_en"],
+            "unit": localized(r, "unit", lang),
             "unit_symbol": r["unit_symbol"],
             "decimals": r["decimals"],
         }
@@ -133,19 +132,17 @@ async def get_indicator(
         if not row:
             raise HTTPException(status_code=404, detail="Indicator not found")
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-
     return {
         "data": {
             "id": row["id"],
             "code": row["code"],
-            "name": row[name_key],
-            "description": row[f"description_{lang}"] if lang in ("en", "ar") else row["description_en"],
+            "name": localized(row, "name", lang),
+            "description": localized(row, "description", lang),
             "dataset": {
                 "slug": row["dataset_slug"],
-                "name": row[f"dataset_name_{lang}"] if lang in ("en", "ar") else row["dataset_name_en"],
+                "name": localized(row, "dataset_name", lang),
             },
-            "unit": row[f"unit_{lang}"] if lang in ("en", "ar") else row["unit_en"],
+            "unit": localized(row, "unit", lang),
             "unit_symbol": row["unit_symbol"],
             "decimals": row["decimals"],
             "dimensions": row["dimensions"],

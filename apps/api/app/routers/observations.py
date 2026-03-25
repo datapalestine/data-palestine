@@ -4,6 +4,7 @@ from typing import Literal
 
 from fastapi import APIRouter, Query, Request
 
+from app.routers import localized
 from app.schemas.common import paginate
 
 router = APIRouter()
@@ -88,8 +89,6 @@ async def list_observations(
     }.get(sort, "o.time_period")
     order_dir = "ASC" if order == "asc" else "DESC"
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-
     async with pool.acquire() as conn:
         count_sql = f"""
             SELECT COUNT(*)
@@ -129,11 +128,11 @@ async def list_observations(
             "indicator": {
                 "id": r["indicator_id"],
                 "code": r["indicator_code"],
-                "name": r[f"indicator_{name_key}"],
+                "name": localized(r, "indicator_name", lang),
             },
             "geography": {
                 "code": r["geo_code"],
-                "name": r[f"geo_{name_key}"],
+                "name": localized(r, "geo_name", lang),
             },
             "time_period": r["time_period"].isoformat(),
             "time_precision": r["time_precision"],

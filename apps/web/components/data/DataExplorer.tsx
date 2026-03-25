@@ -429,7 +429,7 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
                   setLocalGeos([]);
                   setIndicatorSearch("");
                 }}
-                dir={locale === "ar" ? "rtl" : "ltr"}
+                dir="auto"
                 className="w-full cursor-pointer rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:border-neutral-400 focus:border-[#1B5E20] focus:outline-none focus:ring-1 focus:ring-[#1B5E20]"
               >
                 <option value="">{t.filters.selectDataset}</option>
@@ -489,7 +489,7 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
                           onChange={() => toggleIndicator(id)}
                           className="mt-0.5 cursor-pointer accent-[#1B5E20]"
                         />
-                        <span className="leading-snug">{ind.name}</span>
+                        <span className="leading-snug" dir="auto">{ind.name}</span>
                       </label>
                     );
                   })}

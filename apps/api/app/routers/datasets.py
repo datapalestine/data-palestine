@@ -4,6 +4,7 @@ from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
+from app.routers import localized
 from app.schemas.common import paginate
 
 router = APIRouter()
@@ -94,20 +95,16 @@ async def list_datasets(
         params.extend([per_page, (page - 1) * per_page])
         rows = await conn.fetch(data_sql, *params)
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-    desc_key = f"description_{lang}" if lang in ("en", "ar") else "description_en"
-    cat_name_key = f"category_name_{lang}" if lang in ("en", "ar") else "category_name_en"
-
     data = []
     for r in rows:
         item = {
             "id": r["id"],
             "slug": r["slug"],
-            "name": r[name_key],
-            "description": r[desc_key],
+            "name": localized(r, "name", lang),
+            "description": localized(r, "description", lang),
             "category": {
                 "slug": r["category_slug"],
-                "name": r[cat_name_key],
+                "name": localized(r, "category_name", lang),
             } if r["category_slug"] else None,
             "source": {
                 "organization": r["source_name"],
@@ -159,20 +156,17 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
             ORDER BY i.sort_order, i.name_en
         """, row["id"])
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-    desc_key = f"description_{lang}" if lang in ("en", "ar") else "description_en"
-
     data = {
         "id": row["id"],
         "slug": row["slug"],
-        "name": row[name_key],
-        "description": row[desc_key],
+        "name": localized(row, "name", lang),
+        "description": localized(row, "description", lang),
         "category": {
             "slug": row["category_slug"],
-            "name": row[f"category_name_{lang}"] if lang in ("en", "ar") else row["category_name_en"],
+            "name": localized(row, "category_name", lang),
         } if row["category_slug"] else None,
         "source": {
-            "organization": row[f"source_name_{lang}"] if lang in ("en", "ar") else row["source_name_en"],
+            "organization": localized(row, "source_name", lang),
             "url": row["source_url"],
         } if row["source_name_en"] else None,
         "update_frequency": row["update_frequency"],
@@ -180,7 +174,7 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
             "start": row["temporal_coverage_start"].isoformat() if row["temporal_coverage_start"] else None,
             "end": row["temporal_coverage_end"].isoformat() if row["temporal_coverage_end"] else None,
         },
-        "methodology": row[f"methodology_{lang}"] if lang in ("en", "ar") else row["methodology_en"],
+        "methodology": localized(row, "methodology", lang),
         "license": row["license"],
         "version": row["version"],
         "tags": row["tags"] or [],
@@ -190,8 +184,8 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
             {
                 "id": i["id"],
                 "code": i["code"],
-                "name": i[name_key],
-                "unit": i[f"unit_{lang}"] if lang in ("en", "ar") else i["unit_en"],
+                "name": localized(i, "name", lang),
+                "unit": localized(i, "unit", lang),
                 "unit_symbol": i["unit_symbol"],
                 "decimals": i["decimals"],
             }
@@ -208,8 +202,6 @@ async def get_dataset_geographies(
 ) -> dict:
     """Return geographies that have observations in this dataset, as a tree."""
     pool = request.app.state.pool
-
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
 
     async with pool.acquire() as conn:
         # Get dataset ID
@@ -260,7 +252,7 @@ async def get_dataset_geographies(
     items = [
         {
             "code": r["code"],
-            "name": r[name_key],
+            "name": localized(r, "name", lang),
             "level": r["level"],
             "parent_code": r["parent_code"],
             "has_data": r["code"] in data_codes,

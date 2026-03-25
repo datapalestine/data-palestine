@@ -4,6 +4,8 @@ from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
 
+from app.routers import localized
+
 router = APIRouter()
 
 
@@ -43,12 +45,10 @@ async def list_geographies(
             ORDER BY level, name_en
         """, *params)
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-
     items = [
         {
             "code": r["code"],
-            "name": r[name_key],
+            "name": localized(r, "name", lang),
             "level": r["level"],
             "parent_code": r["parent_code"],
             "latitude": float(r["latitude"]) if r["latitude"] else None,
@@ -97,12 +97,10 @@ async def get_geography(
     if not row:
         raise HTTPException(status_code=404, detail="Geography not found")
 
-    name_key = f"name_{lang}" if lang in ("en", "ar") else "name_en"
-
     return {
         "data": {
             "code": row["code"],
-            "name": row[name_key],
+            "name": localized(row, "name", lang),
             "level": row["level"],
             "parent_code": row["parent_code"],
             "latitude": float(row["latitude"]) if row["latitude"] else None,
