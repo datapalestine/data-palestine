@@ -1,4 +1,4 @@
-# 🇵🇸 Data Palestine
+# Data Palestine
 
 **The open data platform for Palestinian statistical, humanitarian, and socioeconomic data.**
 
@@ -7,33 +7,33 @@
 
 ---
 
-Data Palestine aggregates and modernizes data from PCBS, OCHA, UNRWA, World Bank, B'Tselem, and other sources — transforming scattered PDFs, outdated interfaces, and siloed databases into a unified, searchable, API-driven platform.
+Data Palestine aggregates and modernizes data from PCBS, OCHA, UNRWA, World Bank, B'Tselem, and other sources. Transforming scattered PDFs, outdated interfaces, and siloed databases into a unified, searchable, API-driven platform.
 
-## 🔗 Links
+## Links
 
 - **Website:** [datapalestine.org](https://datapalestine.org)
 - **API:** [datapalestine.org/api/v1](https://datapalestine.org/api/v1)
 - **API Docs:** [datapalestine.org/en/developers](https://datapalestine.org/en/developers)
 
-## ✨ Features
+## Features
 
-- **Comprehensive Data Catalog** — Population, economy, labor, education, health, conflict, displacement, and more
-- **Modern REST API** — Programmatic access to all data with filtering, pagination, and bulk export
-- **Bilingual** — Full Arabic (RTL) and English support
-- **Interactive Visualizations** — Time-series charts, geographic maps, and data tables
-- **Open Source** — All code, pipelines, and methodology publicly available
-- **Source Transparency** — Every data point traces back to its original source
+- **Comprehensive Data Catalog**: Population, economy, labor, education, health, conflict, displacement, and more
+- **Modern REST API**: Programmatic access to all data with filtering, pagination, and bulk export
+- **Bilingual**: Full Arabic (RTL) and English support
+- **Interactive Visualizations**: Time-series charts, geographic maps, and data tables
+- **Open Source**: All code, pipelines, and methodology publicly available
+- **Source Transparency**: Every data point traces back to its original source
 
-## 🏗️ Architecture
+## Architecture
 
 ```
-apps/api      → FastAPI (Python) backend serving the REST API
-apps/web      → Next.js frontend with bilingual support
-packages/db   → PostgreSQL schema with TimescaleDB + PostGIS
+apps/api          → FastAPI (Python) backend serving the REST API
+apps/web          → Next.js frontend with bilingual support
+packages/db       → PostgreSQL schema with TimescaleDB + PostGIS
 packages/pipeline → Data ingestion pipelines (scrapers, transformers)
 ```
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 
@@ -67,7 +67,7 @@ npm run dev
 
 The API will be available at `http://localhost:8000` and the website at `http://localhost:3000`.
 
-## 📊 Data Sources
+## Data Sources
 
 | Source | Coverage | Status |
 |--------|----------|--------|
@@ -78,22 +78,22 @@ The API will be available at `http://localhost:8000` and the website at `http://
 | UNRWA | Refugee demographics, education, health | 🔄 Planned |
 | WHO | Health indicators | 🔄 Planned |
 
-## 🤝 Contributing
+## Contributing
 
 We welcome contributions! See [CONTRIBUTING.md](docs/contributing.md) for guidelines.
 
 Priority areas for contribution:
-- **Data pipelines** — Add new data sources or improve existing scrapers
-- **Translations** — Improve Arabic translations
-- **Visualizations** — Build new chart types and map layers
-- **Documentation** — Improve API docs and methodology pages
+- **Data pipelines**: Add new data sources or improve existing scrapers
+- **Translations**: Improve Arabic translations
+- **Visualizations**: Build new chart types and map layers
+- **Documentation**: Improve API docs and methodology pages
 
-## 📖 License
+## License
 
 - **Code:** [MIT License](LICENSE)
-- **Data:** [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) — Data is sourced from publicly available sources. Original data ownership belongs to the respective sources (PCBS, OCHA, etc.). Attribution is required.
+- **Data:** [Creative Commons Attribution 4.0](https://creativecommons.org/licenses/by/4.0/) - Data is sourced from publicly available sources. Original data ownership belongs to the respective sources (PCBS, OCHA, etc.). Attribution is required.
 
-## 📬 Contact
+## Contact
 
 - **Email:** info@datapalestine.org
 - **Twitter/X:** [@DataPalestine](https://twitter.com/DataPalestine)
@@ -101,6 +101,7 @@ Priority areas for contribution:
 ---
 
 <p align="center">
-  <strong>بيانات مفتوحة لفلسطين. مجانية. شفافة. سهلة الوصول.</strong><br>
-  Open data for Palestine. Free. Transparent. Accessible.
+  <strong>بيانات مفتوحة لفلسطين. مجانية. شفافة. سهلة الوصول.</strong>
+<br>
+  Open data for Palestine. Free. Transparent. Accessible 
 </p>
