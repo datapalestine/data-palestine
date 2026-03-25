@@ -1,6 +1,6 @@
 # Data Palestine — API Reference
 
-Base URL: `https://api.datapalestine.org/v1`
+Base URL: `https://datapalestine.org/api/v1`
 
 All responses follow this envelope:
 
@@ -293,9 +293,5 @@ Powered by Meilisearch. Returns a mixed list of datasets, indicators, and storie
 | Tier            | Limit            |
 |-----------------|------------------|
 | Unauthenticated | 100 req/minute   |
-| API Key         | 1,000 req/minute |
-| Export          | 10 req/minute    |
 
 Rate limit headers: `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`
-
-API keys are free — register at datapalestine.org/api-docs.

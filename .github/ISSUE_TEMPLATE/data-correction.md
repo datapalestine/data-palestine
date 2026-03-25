@@ -17,7 +17,7 @@ labels: data-quality
 **Geography:**
 
 
-**Value in Data Palestine:**
+**Current value shown in Data Palestine:**
 
 
 **Correct value (with source):**

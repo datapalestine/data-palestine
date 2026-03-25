@@ -7,7 +7,7 @@ The Data Palestine API provides free, open access to Palestinian statistical dat
 ## Base URL
 
 ```
-https://api.datapalestine.org/api/v1
+https://datapalestine.org/api/v1
 ```
 
 ## Endpoints
@@ -30,5 +30,4 @@ https://api.datapalestine.org/api/v1
 
 ## Rate Limits
 
-- 60 requests per minute
-- 10,000 requests per day
+- 100 requests per minute per IP (unauthenticated)

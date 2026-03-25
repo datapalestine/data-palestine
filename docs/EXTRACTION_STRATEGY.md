@@ -149,7 +149,6 @@ async def crawl_catalogue_category(category_slug: str) -> list[dict]:
     by inspecting network requests. Likely something like:
     /Stat-Data-Catalogue/api/category/{id}/publications
     """
-    # TODO: Inspect AJAX calls in browser DevTools to find the API
     # The catalogue sections load dynamically via JavaScript
     pass
 

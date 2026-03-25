@@ -10,12 +10,13 @@ Thank you for your interest in contributing to Data Palestine! This project is o
 - **Features**: Use the [Feature Request template](https://github.com/datapalestine/data-palestine/issues/new?template=feature-request.md)
 
 ### Code Contributions
-1. Fork the repository
+1. Fork the repository: `git clone https://github.com/datapalestine/data-palestine.git`
 2. Create a feature branch: `git checkout -b feature/your-feature`
 3. Make your changes
 4. Run tests: `cd apps/api && pytest` and `cd apps/web && npm run lint`
 5. Commit with a clear message: `git commit -m "feat: add labor force dataset pipeline"`
-6. Push and open a pull request
+6. Push to your fork and open a pull request
+7. Address review feedback and get approval before merge
 
 ### Commit Message Convention
 We follow [Conventional Commits](https://www.conventionalcommits.org/):
@@ -29,11 +30,12 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/):
 - `chore:` maintenance tasks
 
 ### Adding a New Data Pipeline
-1. Create a new file in `packages/pipeline/pipeline/sources/` (follow `worldbank.py` or `techforpalestine.py`)
+1. Create a new file in `packages/pipeline/pipeline/sources/` (follow `worldbank.py` or `techforpalestine.py`). The base class is in `packages/pipeline/pipeline/base.py`.
 2. Every observation must link to a `source_document` with the original URL
 3. Use the existing database schema, don't modify tables
-4. Test locally and run `python scripts/verify_accuracy.py` to confirm data integrity
-5. Document the data source in `docs/DATA_SOURCES.md`
+4. Add tests in `packages/pipeline/tests/`
+5. Test locally and run `python scripts/verify_accuracy.py` to confirm data integrity
+6. Document the data source in `docs/DATA_SOURCES.md`
 
 ### Translation Contributions
 - Translation files are in `apps/web/messages/`
