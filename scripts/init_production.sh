@@ -137,13 +137,13 @@ echo "[7/8] Running cleanup scripts..."
 cd /app
 
 # Geography reprocessing
-python scripts/decompose_indicators.py 2>&1 | tail -3 || echo "  decompose skipped"
+python scripts/archive/decompose_indicators.py 2>&1 | tail -3 || echo "  decompose skipped"
 
 # Dataset consolidation
-python scripts/consolidate_datasets.py 2>&1 | tail -3 || echo "  consolidation skipped"
+python scripts/archive/consolidate_datasets.py 2>&1 | tail -3 || echo "  consolidation skipped"
 
 # Final cleanup
-python scripts/final_cleanup.py 2>&1 | tail -3 || echo "  final cleanup skipped"
+python scripts/archive/final_cleanup.py 2>&1 | tail -3 || echo "  final cleanup skipped"
 
 # Step 8: Final report
 echo ""
