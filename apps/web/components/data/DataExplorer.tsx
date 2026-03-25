@@ -148,8 +148,8 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
       setDatasetDetail(detail.data);
       setGeoTree(geos.data);
 
-      // Auto-select first 3 indicators + all geographies + auto-apply
-      const allInds = detail.data.indicators.slice(0, 3).map((i: { id: number }) => String(i.id));
+      // Auto-select first indicator + all geographies + auto-apply
+      const allInds = detail.data.indicators.slice(0, 1).map((i: { id: number }) => String(i.id));
       const allGeos: string[] = [];
       function walkGeos(nodes: Geography[]) {
         for (const n of nodes) { allGeos.push(n.code); if (n.children) walkGeos(n.children); }
@@ -199,6 +199,19 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
     setLocalYearFrom(yearFrom);
     setLocalYearTo(yearTo);
   }, [datasetSlug, selectedIndicators, selectedGeos, yearFrom, yearTo]);
+
+  // ─── Auto-apply when indicators or geographies change ─
+  useEffect(() => {
+    if (!localDataset || localIndicators.length === 0) return;
+    const params = new URLSearchParams();
+    params.set("dataset", localDataset);
+    params.set("indicators", localIndicators.join(","));
+    if (localGeos.length) params.set("geography", localGeos.join(","));
+    if (localYearFrom) params.set("year_from", localYearFrom);
+    if (localYearTo) params.set("year_to", localYearTo);
+    if (activeTab !== "table") params.set("view", activeTab);
+    router.push(`${pathname}?${params.toString()}`);
+  }, [localIndicators, localGeos]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Push filters to URL ──────────────────────────────
   const applyFilters = useCallback(() => {
