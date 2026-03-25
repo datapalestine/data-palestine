@@ -80,7 +80,7 @@ The API will be available at `http://localhost:8000` and the website at `http://
 
 ## Contributing
 
-We welcome contributions! See [CONTRIBUTING.md](docs/contributing.md) for guidelines.
+We welcome contributions! See [CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 Priority areas for contribution:
 - **Data pipelines**: Add new data sources or improve existing scrapers
