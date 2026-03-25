@@ -77,7 +77,8 @@ echo "[3/8] Running World Bank pipeline..."
 cd /app
 python -c "
 from pipeline.sources.worldbank import run_pipeline
-import os
+import os, httpx
+httpx._config.DEFAULT_TIMEOUT_CONFIG = httpx.Timeout(60.0)
 db_url = os.environ.get('DATABASE_URL', 'postgresql://datapalestine:password@db:5432/datapalestine')
 result = run_pipeline(db_url)
 print(f'  World Bank: {result[\"observations_inserted\"]} observations, {result[\"indicators_created\"]} indicators')
@@ -129,7 +130,7 @@ for i, f in enumerate(files):
         table_id = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else i
         title = ' '.join(parts[2:]).replace('-', ' ').strip() if len(parts) > 2 else fname
 
-        table_info = {'table_id': table_id, 'title': title, 'csv_url': f}
+        table_info = {'table_id': table_id, 'title': title, 'csv_url': f, 'url': f}
         result = ingest_table(conn, table_info, content, csv_hash, source_id, pcbs_category_map, geo_name_map)
         if result['status'] == 'ingested':
             total_obs += result['observations']
