@@ -12,6 +12,13 @@ const KEY_INDICATOR_CODES = [
   "life_expectancy",
 ];
 
+const KEY_INDICATOR_LABELS: Record<string, { en: string; ar: string }> = {
+  population_total: { en: "Population", ar: "السكان" },
+  gdp_current_usd: { en: "GDP (current US$)", ar: "الناتج المحلي الإجمالي" },
+  unemployment_rate: { en: "Unemployment", ar: "البطالة" },
+  life_expectancy: { en: "Life Expectancy", ar: "متوسط العمر المتوقع" },
+};
+
 // --- Highlight card configs ---
 interface HighlightConfig {
   id: string;
@@ -156,7 +163,7 @@ async function getKeyIndicatorData(locale: string) {
 
     results.push({
       code: ind.code,
-      name: ind.name,
+      name: KEY_INDICATOR_LABELS[ind.code]?.[locale as "en" | "ar"] || ind.name,
       value: ind.latest_value.value,
       unit_symbol: ind.unit_symbol,
       decimals: ind.decimals,
