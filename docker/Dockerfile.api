@@ -22,7 +22,7 @@ COPY scripts/ /app/scripts/
 COPY packages/db/ /app/packages/db/
 
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
+ENV PYTHONPATH=/app:/app/packages/pipeline
 
 EXPOSE 8000
 

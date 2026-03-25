@@ -10,6 +10,8 @@ export DATABASE_URL="${DATABASE_URL_SYNC:-postgresql://datapalestine:${POSTGRES_
 DB_HOST="${DB_HOST:-db}"
 DB_USER="${DB_USER:-datapalestine}"
 DB_NAME="${DB_NAME:-datapalestine}"
+# Extract password from DATABASE_URL for psql commands
+DB_PASS=$(echo "$DATABASE_URL" | sed -n 's|.*://[^:]*:\([^@]*\)@.*|\1|p')
 
 # Step 0: Check data directories exist
 echo ""
@@ -48,7 +50,7 @@ done
 # Step 2: Check if data already exists
 echo ""
 echo "[2/8] Checking existing data..."
-EXISTING=$(PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -t -c \
+EXISTING=$(PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -t -c \
     "SELECT COUNT(*) FROM observations;" 2>/dev/null || echo "0")
 EXISTING=$(echo "$EXISTING" | tr -d ' ')
 
@@ -61,7 +63,7 @@ if [ "$EXISTING" -gt 1000 ]; then
     echo "============================================"
     echo "Current Database State"
     echo "============================================"
-    PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c \
+    PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c \
         "SELECT 'Datasets' as entity, COUNT(*) FROM datasets
          UNION ALL SELECT 'Indicators', COUNT(*) FROM indicators
          UNION ALL SELECT 'Observations', COUNT(*) FROM observations
@@ -149,7 +151,7 @@ python scripts/archive/final_cleanup.py 2>&1 | tail -3 || echo "  final cleanup 
 echo ""
 echo "[8/8] Final database state:"
 echo "============================================"
-PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c \
+PGPASSWORD="$DB_PASS" psql -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" -c \
     "SELECT 'Datasets' as entity, COUNT(*) FROM datasets
      UNION ALL SELECT 'Indicators', COUNT(*) FROM indicators
      UNION ALL SELECT 'Observations', COUNT(*) FROM observations
