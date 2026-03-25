@@ -76,32 +76,74 @@ echo ""
 echo "[3/8] Running World Bank pipeline..."
 cd /app
 python -c "
-import sys; sys.path.insert(0, '.')
-from packages.pipeline.pipeline.sources.worldbank import run
-run()
-" 2>&1 | tail -5
+from pipeline.sources.worldbank import run_pipeline
+import os
+db_url = os.environ.get('DATABASE_URL', 'postgresql://datapalestine:password@db:5432/datapalestine')
+result = run_pipeline(db_url)
+print(f'  World Bank: {result[\"observations_inserted\"]} observations, {result[\"indicators_created\"]} indicators')
+" 2>&1 | tail -10 || echo "  World Bank pipeline failed (non-fatal)"
 
-# Step 4: PCBS CSV ingestion
+# Step 4: PCBS CSV ingestion (uses raw CSV files, not discovery JSON)
 echo ""
 echo "[4/8] Running PCBS CSV ingestion..."
 if [ -d "$DATA_DIR/raw/pcbs_csv" ]; then
     CSV_COUNT=$(ls "$DATA_DIR/raw/pcbs_csv"/*.csv 2>/dev/null | wc -l)
     echo "  Found $CSV_COUNT CSV files"
     python -c "
-import sys, os, glob; sys.path.insert(0, '.')
-from packages.pipeline.pipeline.sources.pcbs_csv_ingest import ingest_csv_file
+import os, glob, json, psycopg2
+from pipeline.sources.pcbs_csv_ingest import ingest_table, clean_title, slugify, load_geography_names
+from pipeline.sources.pcbs_csv_ingest import parse_csv_content
+import hashlib
+
+db_url = os.environ.get('DATABASE_URL')
+conn = psycopg2.connect(db_url)
+conn.autocommit = False
+cur = conn.cursor()
+
+# Get PCBS source ID
+cur.execute(\"SELECT id FROM sources WHERE slug = 'pcbs'\")
+row = cur.fetchone()
+if not row:
+    print('  ERROR: PCBS source not found in database. Run schema seed first.')
+    exit(1)
+source_id = row[0]
+
+# Get category map
+cur.execute('SELECT slug, id FROM categories')
+pcbs_category_map = dict(cur.fetchall())
+geo_name_map = load_geography_names(cur)
+
 files = sorted(glob.glob('$DATA_DIR/raw/pcbs_csv/table_*.csv'))
-total = 0
+total_obs = 0
+total_ds = 0
+errors = 0
+
 for i, f in enumerate(files):
     try:
-        n = ingest_csv_file(f)
-        total += n
+        with open(f, 'r', encoding='utf-8', errors='replace') as fh:
+            content = fh.read()
+        csv_hash = hashlib.sha256(content.encode()).hexdigest()
+        fname = os.path.basename(f)
+        # Extract table_id from filename (table_1234_...)
+        parts = fname.replace('.csv', '').split('_')
+        table_id = int(parts[1]) if len(parts) > 1 and parts[1].isdigit() else i
+        title = ' '.join(parts[2:]).replace('-', ' ').strip() if len(parts) > 2 else fname
+
+        table_info = {'table_id': table_id, 'title': title, 'csv_url': f}
+        result = ingest_table(conn, table_info, content, csv_hash, source_id, pcbs_category_map, geo_name_map)
+        if result['status'] == 'ingested':
+            total_obs += result['observations']
+            total_ds += 1
     except Exception as e:
-        pass
-    if (i+1) % 100 == 0:
-        print(f'  Processed {i+1}/{len(files)} files...')
-print(f'  Total: {total} observations from {len(files)} CSV files')
-" 2>&1 | grep -E "Total|Processed|Error"
+        errors += 1
+    if (i+1) % 200 == 0:
+        print(f'  Processed {i+1}/{len(files)} files... ({total_ds} datasets, {total_obs} obs)')
+        conn.commit()
+
+conn.commit()
+conn.close()
+print(f'  Total: {total_obs} observations from {total_ds} datasets ({errors} errors)')
+" 2>&1 | grep -E "Total|Processed|ERROR"
 else
     echo "  No CSV directory found, skipping."
 fi
@@ -110,25 +152,24 @@ fi
 echo ""
 echo "[5/8] Running Tech for Palestine pipeline..."
 python -c "
-import sys; sys.path.insert(0, '.')
-from packages.pipeline.pipeline.sources.techforpalestine import run
+from pipeline.sources.techforpalestine import run
 run()
 " 2>&1 | tail -5
 
-# Step 6: XLSX ingestion (IPI file)
+# Step 6: XLSX ingestion
 echo ""
 echo "[6/8] Running XLSX ingestion..."
 if [ -d "$DATA_DIR/raw/pcbs_xlsx" ]; then
     python -c "
-import sys, glob; sys.path.insert(0, '.')
+import glob
 from packages.pipeline.pcbs.xlsx_ingest import ingest_xlsx
-files = glob.glob('$DATA_DIR/raw/pcbs_xlsx/*.xlsx') + glob.glob('$DATA_DIR/*.xlsx')
-for f in files[:5]:
+files = glob.glob('$DATA_DIR/raw/pcbs_xlsx/*.xlsx')
+for f in sorted(files)[:10]:
     try:
         ingest_xlsx(f)
     except Exception as e:
-        print(f'  Skipped {f}: {e}')
-" 2>&1 | tail -5
+        print(f'  Skipped: {e}')
+" 2>&1 | tail -10
 else
     echo "  No XLSX directory found, skipping."
 fi
