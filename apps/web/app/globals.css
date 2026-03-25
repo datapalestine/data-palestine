@@ -63,7 +63,8 @@ h1, h2, h3, h4 {
     flex-direction: row;
   }
   .explorer-sidebar-width {
-    width: 18rem;
+    width: 20rem;
+    min-width: 20rem;
     flex-shrink: 0;
   }
 }

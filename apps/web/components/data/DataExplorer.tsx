@@ -429,8 +429,7 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
                   setLocalGeos([]);
                   setIndicatorSearch("");
                 }}
-                dir="auto"
-                className="w-full cursor-pointer rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:border-neutral-400 focus:border-[#1B5E20] focus:outline-none focus:ring-1 focus:ring-[#1B5E20]"
+                className="w-full cursor-pointer truncate rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm text-neutral-900 transition-colors hover:border-neutral-400 focus:border-[#1B5E20] focus:outline-none focus:ring-1 focus:ring-[#1B5E20]"
               >
                 <option value="">{t.filters.selectDataset}</option>
                 {datasets.map((ds) => (
