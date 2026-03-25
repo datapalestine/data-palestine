@@ -53,8 +53,9 @@ async def list_datasets(
     where = "WHERE " + " AND ".join(conditions) if conditions else ""
 
     # Sort mapping (whitelisted values only, never user input in SQL)
+    # Always sort by name_en — name_ar contains unclean data (long English titles, not translations)
     sort_col = {
-        "name": "d.name_en" if lang == "en" else "d.name_ar",
+        "name": "d.name_en",
         "updated": "d.updated_at",
         "created": "d.created_at",
     }.get(sort, "d.name_en")
