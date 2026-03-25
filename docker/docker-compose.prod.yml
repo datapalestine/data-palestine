@@ -27,6 +27,7 @@ services:
       -c checkpoint_completion_target=0.9
       -c wal_buffers=8MB
       -c random_page_cost=1.1
+      -c max_locks_per_transaction=256
 
   api:
     build:
