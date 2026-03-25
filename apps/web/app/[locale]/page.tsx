@@ -185,10 +185,14 @@ export default async function HomePage({
   const { locale } = await params;
   const t = await getTranslations("home");
 
+  // Timeout wrapper to prevent SSR from hanging indefinitely
+  const withTimeout = <T,>(promise: Promise<T>, fallback: T, ms = 8000): Promise<T> =>
+    Promise.race([promise, new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))]);
+
   const [keyIndicators, datasetsRes, ...highlightData] = await Promise.all([
-    getKeyIndicatorData(locale),
-    getDatasets(locale, { per_page: 4, sort: "updated", order: "desc" }),
-    ...HIGHLIGHTS.map((h) => getHighlightData(locale, h)),
+    withTimeout(getKeyIndicatorData(locale), []),
+    withTimeout(getDatasets(locale, { per_page: 4, sort: "updated", order: "desc" }), { data: [], meta: { total: 0, page: 1, per_page: 4, total_pages: 0 } }),
+    ...HIGHLIGHTS.map((h) => withTimeout(getHighlightData(locale, h), null)),
   ]);
 
   const datasets = datasetsRes.data;
@@ -198,8 +202,8 @@ export default async function HomePage({
   let totalIndicators = 15250;
   let totalObservations = 87672;
   try {
-    const statsRes = await getIndicators(locale, { per_page: 1 });
-    totalIndicators = statsRes.meta.total;
+    const statsRes = await withTimeout(getIndicators(locale, { per_page: 1 }), null);
+    if (statsRes) totalIndicators = statsRes.meta.total;
   } catch {}
 
   return (
