@@ -71,13 +71,13 @@ async def list_indicators(
             FROM indicators i
             JOIN datasets d ON i.dataset_id = d.id
             LEFT JOIN categories c ON d.category_id = c.id
-            LEFT JOIN LATERAL (
-                SELECT o.value, o.time_period, o.geography_code
-                FROM observations o
-                WHERE o.indicator_id = i.id AND o.is_latest = TRUE
-                ORDER BY o.time_period DESC
-                LIMIT 1
-            ) latest ON TRUE
+            LEFT JOIN (
+                SELECT DISTINCT ON (indicator_id)
+                    indicator_id, value, time_period, geography_code
+                FROM observations
+                WHERE is_latest = TRUE
+                ORDER BY indicator_id, time_period DESC
+            ) latest ON latest.indicator_id = i.id
             {where}
             ORDER BY d.name_en, i.sort_order, i.name_en
             LIMIT ${idx} OFFSET ${idx + 1}
