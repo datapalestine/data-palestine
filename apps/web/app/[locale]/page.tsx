@@ -186,25 +186,32 @@ export default async function HomePage({
   const t = await getTranslations("home");
 
   // Timeout wrapper to prevent SSR from hanging indefinitely
-  const withTimeout = <T,>(promise: Promise<T>, fallback: T, ms = 8000): Promise<T> =>
+  const withTimeout = <T,>(promise: Promise<T>, fallback: T, ms = 10000): Promise<T> =>
     Promise.race([promise, new Promise<T>((resolve) => setTimeout(() => resolve(fallback), ms))]);
 
-  const [keyIndicators, datasetsRes, ...highlightData] = await Promise.all([
-    withTimeout(getKeyIndicatorData(locale), []),
-    withTimeout(getDatasets(locale, { per_page: 4, sort: "updated", order: "desc" }), { data: [], meta: { total: 0, page: 1, per_page: 4, total_pages: 0 } }),
-    ...HIGHLIGHTS.map((h) => withTimeout(getHighlightData(locale, h), null)),
-  ]);
-
+  // Fetch essentials first (2 calls)
+  const datasetsRes = await withTimeout(
+    getDatasets(locale, { per_page: 4, sort: "updated", order: "desc" }),
+    { data: [], meta: { total: 0, page: 1, per_page: 4, total_pages: 0 } },
+  );
   const datasets = datasetsRes.data;
   const totalDatasets = datasetsRes.meta.total;
 
-  // Get real indicator/observation counts
   let totalIndicators = 15250;
   let totalObservations = 87672;
   try {
     const statsRes = await withTimeout(getIndicators(locale, { per_page: 1 }), null);
     if (statsRes) totalIndicators = statsRes.meta.total;
   } catch {}
+
+  // Fetch highlights sequentially to avoid overloading 1-CPU server
+  const highlightData: (Awaited<ReturnType<typeof getHighlightData>>)[] = [];
+  for (const h of HIGHLIGHTS) {
+    highlightData.push(await withTimeout(getHighlightData(locale, h), null));
+  }
+
+  // Key indicators last (makes 5 sequential API calls internally)
+  const keyIndicators = await withTimeout(getKeyIndicatorData(locale), []);
 
   return (
     <div>

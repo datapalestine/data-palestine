@@ -130,7 +130,7 @@ async function apiFetch<T>(
       if (value !== undefined) url.searchParams.set(key, String(value));
     }
   }
-  const res = await fetch(url.toString(), { next: { revalidate: 300 } });
+  const res = await fetch(url.toString(), { next: { revalidate: 3600 } });
   if (!res.ok) throw new Error(`API ${res.status}: ${path}`);
   return res.json();
 }
