@@ -73,7 +73,7 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=_cors_origins,
     allow_credentials=False,
-    allow_methods=["GET", "OPTIONS"],
+    allow_methods=["GET", "POST", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -101,7 +101,7 @@ async def not_found_handler(request: Request, exc):
 
 
 # Import and register routers
-from app.routers import datasets, indicators, observations, geographies, sources, export  # noqa: E402
+from app.routers import datasets, indicators, observations, geographies, sources, export, curation  # noqa: E402
 
 app.include_router(datasets.router, prefix="/api/v1", tags=["Datasets"])
 app.include_router(indicators.router, prefix="/api/v1", tags=["Indicators"])
@@ -109,3 +109,4 @@ app.include_router(observations.router, prefix="/api/v1", tags=["Observations"])
 app.include_router(geographies.router, prefix="/api/v1", tags=["Geographies"])
 app.include_router(sources.router, prefix="/api/v1", tags=["Sources"])
 app.include_router(export.router, prefix="/api/v1", tags=["Export"])
+app.include_router(curation.router, prefix="/api/v1", tags=["Curation"])

@@ -58,6 +58,14 @@ export function Footer() {
                   {tNav("methodology")}
                 </Link>
               </li>
+              <li>
+                <Link
+                  href={`/${locale}/contribute/curate`}
+                  className="text-neutral-400 hover:text-white"
+                >
+                  {locale === "ar" ? "ساعد في تنظيف البيانات" : "Help Clean Data"}
+                </Link>
+              </li>
             </ul>
           </div>
 
