@@ -324,6 +324,28 @@ INSERT INTO sources (slug, name_en, name_ar, source_type, website_url, reliabili
     ('pwa', 'Palestinian Water Authority', 'سلطة المياه الفلسطينية', 'government', NULL, 4);
 
 -- ============================================================
+-- CURATION REVIEWS
+-- Contributor-submitted data quality reviews
+-- ============================================================
+
+CREATE TABLE IF NOT EXISTS curation_reviews (
+    id              SERIAL PRIMARY KEY,
+    dataset_id      INTEGER REFERENCES datasets(id) NOT NULL,
+    reviewer_name   VARCHAR(100),
+    reviewer_email  VARCHAR(200),
+    status          VARCHAR(20) DEFAULT 'pending',
+    changes         JSONB NOT NULL,
+    notes           TEXT,
+    reject_reason   TEXT,
+    created_at      TIMESTAMPTZ DEFAULT NOW(),
+    reviewed_at     TIMESTAMPTZ,
+    reviewed_by     VARCHAR(100)
+);
+
+CREATE INDEX idx_curation_reviews_status ON curation_reviews(status);
+CREATE INDEX idx_curation_reviews_dataset ON curation_reviews(dataset_id);
+
+-- ============================================================
 -- HELPER FUNCTIONS
 -- ============================================================
 

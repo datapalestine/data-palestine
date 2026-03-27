@@ -165,6 +165,22 @@
     "female": "Female",
     "total": "Total"
   },
+  "contribute": {
+    "curate": {
+      "title": "Help Clean Data",
+      "subtitle": "Review and improve dataset metadata and indicator names",
+      "progress": "{reviewed} of {total} datasets reviewed",
+      "submit": "Submit Review",
+      "skip": "Skip",
+      "success": "Review submitted successfully. Thank you for your contribution!",
+      "admin": {
+        "title": "Curation Admin",
+        "enterKey": "Enter admin key",
+        "approve": "Approve & Apply",
+        "reject": "Reject"
+      }
+    }
+  },
   "footer": {
     "tagline": "Open data for Palestine. Free. Transparent. Accessible.",
     "dataAccess": "Data Access",

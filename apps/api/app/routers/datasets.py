@@ -157,6 +157,18 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
             ORDER BY i.sort_order, i.name_en
         """, row["id"])
 
+        # Get the original source document URL (the actual data file)
+        source_doc = await conn.fetchrow("""
+            SELECT DISTINCT sd.document_url, sd.file_type
+            FROM observations o
+            JOIN indicators i ON o.indicator_id = i.id
+            JOIN source_documents sd ON o.source_document_id = sd.id
+            WHERE i.dataset_id = $1
+              AND sd.document_url IS NOT NULL
+              AND sd.document_url != ''
+            LIMIT 1
+        """, row["id"])
+
     data = {
         "id": row["id"],
         "slug": row["slug"],
@@ -169,6 +181,8 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
         "source": {
             "organization": localized(row, "source_name", lang),
             "url": row["source_url"],
+            "document_url": source_doc["document_url"] if source_doc else None,
+            "document_type": source_doc["file_type"] if source_doc else None,
         } if row["source_name_en"] else None,
         "update_frequency": row["update_frequency"],
         "temporal_coverage": {

@@ -878,15 +878,23 @@ export function DataExplorer({ locale, t }: { locale: string; t: T }) {
                   </svg>
                   {copiedApi ? (locale === "ar" ? "تم النسخ!" : "Copied!") : (locale === "ar" ? "نسخ رابط API" : "Copy API URL")}
                 </button>
-                {datasetDetail.source?.url && (
-                  <a href={datasetDetail.source.url} target="_blank" rel="noopener noreferrer"
+                {(datasetDetail.source?.document_url || datasetDetail.source?.url) && (
+                  <a href={datasetDetail.source.document_url || datasetDetail.source.url || "#"} target="_blank" rel="noopener noreferrer"
                     className="flex w-full cursor-pointer items-center gap-3 rounded-md border border-neutral-200 px-4 py-2.5 text-[12px] font-medium text-neutral-700 transition-colors hover:bg-neutral-50">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="shrink-0">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-                      <polyline points="15 3 21 3 21 9" />
-                      <line x1="10" y1="14" x2="21" y2="3" />
+                      {datasetDetail.source?.document_url ? (<>
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="7 10 12 15 17 10" />
+                        <line x1="12" y1="15" x2="12" y2="3" />
+                      </>) : (<>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                        <polyline points="15 3 21 3 21 9" />
+                        <line x1="10" y1="14" x2="21" y2="3" />
+                      </>)}
                     </svg>
-                    {locale === "ar" ? "ملف المصدر" : "Source File"}
+                    {datasetDetail.source?.document_url
+                      ? (locale === "ar" ? "تحميل ملف المصدر" : "Download Source File")
+                      : (locale === "ar" ? "موقع المصدر" : "Source Website")}
                   </a>
                 )}
               </div>

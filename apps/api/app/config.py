@@ -28,6 +28,9 @@ class Settings(BaseSettings):
     # Rate limiting
     rate_limit_per_minute: int = 100
 
+    # Admin auth
+    admin_secret_key: str = "admin-dev-key-change-me"
+
 
 settings = Settings()
 
