@@ -37,6 +37,8 @@ interface CategoryRef {
 interface SourceRef {
   organization: string;
   url: string | null;
+  document_url?: string | null;
+  document_type?: string | null;
 }
 
 interface TemporalCoverage {
