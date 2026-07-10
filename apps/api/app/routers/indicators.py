@@ -23,7 +23,7 @@ async def list_indicators(
     """List indicators with filters. Includes latest_value for each."""
     pool = request.app.state.pool
 
-    conditions = []
+    conditions = ["i.deleted_at IS NULL"]
     params = []
     idx = 1
 
@@ -126,7 +126,7 @@ async def get_indicator(
                    d.name_en AS dataset_name_en, d.name_ar AS dataset_name_ar
             FROM indicators i
             JOIN datasets d ON i.dataset_id = d.id
-            WHERE i.id = $1
+            WHERE i.id = $1 AND i.deleted_at IS NULL
         """, indicator_id)
 
         if not row:

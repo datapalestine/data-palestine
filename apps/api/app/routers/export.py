@@ -29,7 +29,10 @@ async def export_dataset(
             raise HTTPException(status_code=404, detail=f"Dataset '{dataset_slug}' not found")
 
         # Build query
-        conditions = ["i.dataset_id = $1", "o.is_latest = TRUE"]
+        conditions = [
+            "i.dataset_id = $1", "o.is_latest = TRUE",
+            "i.deleted_at IS NULL", "o.deleted_at IS NULL",
+        ]
         params: list = [ds["id"]]
         idx = 2
 
