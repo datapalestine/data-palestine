@@ -122,6 +122,7 @@ CREATE TABLE datasets (
     category_id     INTEGER REFERENCES categories(id),
     primary_source_id INTEGER REFERENCES sources(id),
     status          dataset_status DEFAULT 'draft',
+    quality_status  VARCHAR(20) DEFAULT 'needs_review',  -- Curation workflow state: needs_review, approved
     update_frequency update_frequency,
     temporal_coverage_start DATE,                       -- Earliest data point
     temporal_coverage_end   DATE,                       -- Latest data point
@@ -178,6 +179,7 @@ CREATE TABLE indicators (
     metadata        JSONB DEFAULT '{}',
     created_at      TIMESTAMPTZ DEFAULT NOW(),
     updated_at      TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at      TIMESTAMPTZ,                         -- Soft delete: set instead of hard DELETE
     UNIQUE(dataset_id, code)
 );
 
@@ -206,6 +208,7 @@ CREATE TABLE observations (
     data_version    INTEGER DEFAULT 1,                  -- Incremented when data is revised
     is_latest       BOOLEAN DEFAULT TRUE,               -- FALSE for superseded versions
     created_at      TIMESTAMPTZ DEFAULT NOW(),
+    deleted_at      TIMESTAMPTZ,                         -- Soft delete: set instead of hard DELETE
     PRIMARY KEY (id, time_period)                       -- Composite PK for TimescaleDB partitioning
 );
 

@@ -101,7 +101,7 @@ Indicator IDs in the current schema are auto-increment integers (`id: Mapped[int
 PCBS reformats their CSV exports periodically without notice. The parser's `PATTERNS` list is a closed enum. The pipeline run logger tracks counts but does not alert on "high skipped ratio" conditions.
 
 **How to avoid:**
-- Add an assertion in the pipeline: if `records_inserted / records_processed < 0.5`, set pipeline run status to "warning" and log which file triggered the issue.
+- Add an assertion in the pipeline: if `records_inserted / records_processed < 0.5`, set pipeline run status to "warning" and log which file triggered the issue. **Done** — `determine_run_status()` in `packages/pipeline/pipeline/sources/pcbs_csv_ingest.py` sets `pipeline_runs.status = 'partial'` when fewer than half the tables in a run ingest successfully (pinned by `packages/pipeline/tests/test_pcbs_csv_ingest.py`).
 - Log the detected pattern per file in the pipeline run metadata JSONB column.
 - Write a test that runs the parser against a representative file from each known pattern and asserts at least one observation is returned.
 

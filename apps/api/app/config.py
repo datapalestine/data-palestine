@@ -29,11 +29,26 @@ class Settings(BaseSettings):
     rate_limit_per_minute: int = 100
 
     # Admin auth
-    admin_secret_key: str = "admin-dev-key-change-me"
+    admin_secret_key: str = ""
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        _validate_production_settings(self)
+
+
+def _validate_production_settings(s: "Settings") -> None:
+    """Fail loudly in production if secret_key/admin_secret_key is unset or a known default."""
+    if s.environment == "development":
+        return
+    if not s.secret_key:
+        raise RuntimeError(
+            "SECRET_KEY must be set in production. Set the SECRET_KEY environment variable."
+        )
+    if not s.admin_secret_key or s.admin_secret_key == "admin-dev-key-change-me":
+        raise RuntimeError(
+            "ADMIN_SECRET_KEY must be set to a non-default value in production. "
+            "Set the ADMIN_SECRET_KEY environment variable."
+        )
 
 
 settings = Settings()
-
-# Fail loudly in production if secret_key is not set
-if settings.environment != "development" and not settings.secret_key:
-    raise RuntimeError("SECRET_KEY must be set in production. Set the SECRET_KEY environment variable.")

@@ -1,10 +1,11 @@
 """Curation API routes: review queue, submissions, and admin approval workflow."""
 
+import hmac
 from datetime import datetime, timezone
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, model_validator
 
 from app.config import settings
 from app.routers import localized
@@ -23,7 +24,7 @@ def _require_admin(request: Request) -> None:
     if not auth.startswith("Bearer "):
         raise HTTPException(status_code=401, detail="Missing or invalid Authorization header")
     token = auth.removeprefix("Bearer ").strip()
-    if token != settings.admin_secret_key:
+    if not settings.admin_secret_key or not hmac.compare_digest(token, settings.admin_secret_key):
         raise HTTPException(status_code=401, detail="Invalid admin secret key")
 
 
@@ -31,11 +32,34 @@ def _require_admin(request: Request) -> None:
 # Request / response models
 # ---------------------------------------------------------------------------
 
+class IndicatorChange(BaseModel):
+    action: Literal["rename", "delete", "merge_into", "keep"]
+    indicator_id: int
+    new_name_en: str | None = None
+    new_name_ar: str | None = None
+    target_indicator_id: int | None = None
+
+    @model_validator(mode="after")
+    def _merge_requires_target(self) -> "IndicatorChange":
+        if self.action == "merge_into" and self.target_indicator_id is None:
+            raise ValueError("target_indicator_id is required when action is 'merge_into'")
+        return self
+
+
+class CurationChanges(BaseModel):
+    name_en: str | None = None
+    name_ar: str | None = None
+    description_en: str | None = None
+    description_ar: str | None = None
+    category_slug: str | None = None
+    indicators: list[IndicatorChange] = []
+
+
 class CurationSubmission(BaseModel):
     dataset_id: int
     reviewer_name: str
-    reviewer_email: str
-    changes: dict  # JSONB
+    reviewer_email: EmailStr
+    changes: CurationChanges
     notes: str | None = None
 
 
@@ -68,10 +92,12 @@ async def curation_queue(
                 d.name_en, d.name_ar,
                 c.name_en AS category_name_en,
                 c.name_ar AS category_name_ar,
-                (SELECT COUNT(*) FROM indicators i WHERE i.dataset_id = d.id) AS indicator_count,
+                (SELECT COUNT(*) FROM indicators i
+                    WHERE i.dataset_id = d.id AND i.deleted_at IS NULL) AS indicator_count,
                 (SELECT COUNT(*) FROM observations o
                     JOIN indicators i2 ON o.indicator_id = i2.id
-                    WHERE i2.dataset_id = d.id) AS observation_count
+                    WHERE i2.dataset_id = d.id
+                        AND o.deleted_at IS NULL AND i2.deleted_at IS NULL) AS observation_count
             FROM datasets d
             LEFT JOIN categories c ON d.category_id = c.id
             WHERE d.quality_status = 'needs_review'
@@ -84,7 +110,7 @@ async def curation_queue(
         for r in rows:
             sample_indicators = await conn.fetch("""
                 SELECT name_en FROM indicators
-                WHERE dataset_id = $1
+                WHERE dataset_id = $1 AND deleted_at IS NULL
                 ORDER BY sort_order, name_en
                 LIMIT 5
             """, r["id"])
@@ -139,9 +165,10 @@ async def curation_dataset_detail(
         indicators = await conn.fetch("""
             SELECT
                 i.id, i.name_en, i.code,
-                (SELECT COUNT(*) FROM observations o WHERE o.indicator_id = i.id) AS observation_count
+                (SELECT COUNT(*) FROM observations o
+                    WHERE o.indicator_id = i.id AND o.deleted_at IS NULL) AS observation_count
             FROM indicators i
-            WHERE i.dataset_id = $1
+            WHERE i.dataset_id = $1 AND i.deleted_at IS NULL
             ORDER BY i.sort_order, i.name_en
         """, dataset_id)
 
@@ -153,7 +180,7 @@ async def curation_dataset_detail(
                 i.name_en AS indicator_name_en
             FROM observations o
             JOIN indicators i ON o.indicator_id = i.id
-            WHERE i.dataset_id = $1
+            WHERE i.dataset_id = $1 AND o.deleted_at IS NULL AND i.deleted_at IS NULL
             ORDER BY o.created_at DESC
             LIMIT 10
         """, dataset_id)
@@ -205,7 +232,8 @@ async def curation_dataset_detail(
 
 @router.post("/curation/submit")
 async def submit_curation_review(request: Request, body: CurationSubmission) -> dict:
-    """Submit a curation review for a dataset. No auth required."""
+    """Submit a curation review for a dataset. Requires admin auth."""
+    _require_admin(request)
     pool = request.app.state.pool
 
     async with pool.acquire() as conn:
@@ -221,7 +249,7 @@ async def submit_curation_review(request: Request, body: CurationSubmission) -> 
             VALUES ($1, $2, $3, $4::jsonb, $5, 'pending', NOW())
             RETURNING id
         """, body.dataset_id, body.reviewer_name, body.reviewer_email,
-            json.dumps(body.changes), body.notes)
+            json.dumps(body.changes.model_dump()), body.notes)
 
     return {"data": {"id": review_id}, "message": "Review submitted successfully"}
 
@@ -361,6 +389,29 @@ async def approve_review(request: Request, review_id: int) -> dict:
         dataset_id = row["dataset_id"]
         changes_applied = 0
 
+        # Enforce dataset ownership before applying anything: an indicator (or
+        # merge target) referenced by the review must belong to the review's
+        # dataset, otherwise a maliciously-crafted review could reach across
+        # datasets it was never approved for.
+        indicator_changes = changes.get("indicators", [])
+        referenced_ids = set()
+        for ind_change in indicator_changes:
+            if ind_change.get("indicator_id") is not None:
+                referenced_ids.add(ind_change["indicator_id"])
+            if ind_change.get("target_indicator_id") is not None:
+                referenced_ids.add(ind_change["target_indicator_id"])
+
+        for indicator_id in referenced_ids:
+            owned = await conn.fetchval(
+                "SELECT COUNT(*) FROM indicators WHERE id = $1 AND dataset_id = $2",
+                indicator_id, dataset_id,
+            )
+            if not owned:
+                raise HTTPException(
+                    status_code=422,
+                    detail=f"Indicator {indicator_id} does not belong to dataset {dataset_id}",
+                )
+
         async with conn.transaction():
             # --- Dataset-level changes ---
             ds_updates = {}
@@ -420,12 +471,15 @@ async def approve_review(request: Request, review_id: int) -> dict:
                     changes_applied += 1
 
                 elif action == "delete":
+                    # Soft delete: data is never destroyed outright, only
+                    # marked so it drops out of public read paths and can
+                    # be reversed if an approval turns out to be mistaken.
                     await conn.execute(
-                        "DELETE FROM observations WHERE indicator_id = $1",
+                        "UPDATE observations SET deleted_at = NOW() WHERE indicator_id = $1",
                         indicator_id,
                     )
                     await conn.execute(
-                        "DELETE FROM indicators WHERE id = $1",
+                        "UPDATE indicators SET deleted_at = NOW() WHERE id = $1",
                         indicator_id,
                     )
                     changes_applied += 1
@@ -439,7 +493,7 @@ async def approve_review(request: Request, review_id: int) -> dict:
                         target_id, indicator_id,
                     )
                     await conn.execute(
-                        "DELETE FROM indicators WHERE id = $1",
+                        "UPDATE indicators SET deleted_at = NOW() WHERE id = $1",
                         indicator_id,
                     )
                     changes_applied += 1
@@ -469,7 +523,11 @@ async def approve_review(request: Request, review_id: int) -> dict:
 
             # Mark review as approved
             await conn.execute(
-                "UPDATE curation_reviews SET status = 'approved', reviewed_at = NOW() WHERE id = $1",
+                """
+                UPDATE curation_reviews
+                SET status = 'approved', reviewed_at = NOW(), reviewed_by = 'admin'
+                WHERE id = $1
+                """,
                 review_id,
             )
 
@@ -505,7 +563,7 @@ async def reject_review(request: Request, review_id: int, body: RejectBody) -> d
 
         await conn.execute("""
             UPDATE curation_reviews
-            SET status = 'rejected', reject_reason = $1, reviewed_at = NOW()
+            SET status = 'rejected', reject_reason = $1, reviewed_at = NOW(), reviewed_by = 'admin'
             WHERE id = $2
         """, body.reason, review_id)
 

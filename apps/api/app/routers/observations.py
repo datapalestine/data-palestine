@@ -32,7 +32,7 @@ async def list_observations(
     """
     pool = request.app.state.pool
 
-    conditions = ["o.is_latest = TRUE"]
+    conditions = ["o.is_latest = TRUE", "o.deleted_at IS NULL", "i.deleted_at IS NULL"]
     params = []
     idx = 1
 
