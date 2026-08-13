@@ -115,7 +115,7 @@ async def list_indicators(
 
 @router.get("/indicators/{indicator_id}")
 async def get_indicator(
-    request: Request, indicator_id: int, lang: str = Query("en")
+    request: Request, indicator_id: int, lang: Literal["en", "ar"] = Query("en")
 ) -> dict:
     """Get a single indicator by ID."""
     pool = request.app.state.pool
