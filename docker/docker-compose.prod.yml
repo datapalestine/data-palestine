@@ -40,6 +40,7 @@ services:
       DATABASE_URL_SYNC: postgresql://datapalestine:${POSTGRES_PASSWORD}@db:5432/datapalestine
       ENVIRONMENT: production
       SECRET_KEY: ${SECRET_KEY}
+      ADMIN_SECRET_KEY: ${ADMIN_SECRET_KEY}
       CORS_ORIGINS: ${CORS_ORIGINS:-https://datapalestine.org}
       LOG_LEVEL: INFO
     volumes:

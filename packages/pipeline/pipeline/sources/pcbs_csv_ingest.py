@@ -515,6 +515,21 @@ def ingest_table(
     }
 
 
+def determine_run_status(tables_processed: int, tables_ingested: int) -> str:
+    """Flag a pipeline run as 'partial' when most tables were silently skipped.
+
+    PCBS reformats its CSV exports without notice, which can make the
+    pattern detector in `parse_csv_content` fall through on every table in
+    a run. Without this guard, a run that ingests 0 of 200 tables still
+    reports pipeline_runs.status = 'success', hiding the data gap.
+    """
+    if tables_processed == 0:
+        return "success"
+    if tables_ingested / tables_processed < 0.5:
+        return "partial"
+    return "success"
+
+
 def run_ingestion(discovery_path: str, limit: int = 0) -> dict:
     """Run the full PCBS CSV ingestion pipeline."""
     # Load discovery results
@@ -595,6 +610,13 @@ def run_ingestion(discovery_path: str, limit: int = 0) -> dict:
 
         # Record pipeline run
         completed_at = datetime.now()
+        run_status = determine_run_status(len(csv_tables), total_datasets)
+        if run_status == "partial":
+            logger.warning(
+                "High skip ratio: only %d/%d tables ingested — "
+                "possible CSV pattern detection failure",
+                total_datasets, len(csv_tables),
+            )
         cur.execute(
             """INSERT INTO pipeline_runs
                (pipeline_name, started_at, completed_at, status,
@@ -604,7 +626,7 @@ def run_ingestion(discovery_path: str, limit: int = 0) -> dict:
                 "pcbs_csv_ingest",
                 started_at,
                 completed_at,
-                "success",
+                run_status,
                 len(csv_tables),
                 total_observations,
                 json.dumps({"tables_ingested": total_datasets, "tables_skipped": len(csv_tables) - total_datasets}),

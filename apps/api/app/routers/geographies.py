@@ -84,7 +84,7 @@ async def list_geographies(
 
 @router.get("/geographies/{code}")
 async def get_geography(
-    request: Request, code: str, lang: str = Query("en")
+    request: Request, code: str, lang: Literal["en", "ar"] = Query("en")
 ) -> dict:
     """Get a single geography by code."""
     pool = request.app.state.pool

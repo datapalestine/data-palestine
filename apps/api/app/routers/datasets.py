@@ -85,7 +85,8 @@ async def list_datasets(
                 c.name_ar AS category_name_ar,
                 s.name_en AS source_name,
                 s.website_url AS source_url,
-                (SELECT COUNT(*) FROM indicators i WHERE i.dataset_id = d.id) AS indicator_count
+                (SELECT COUNT(*) FROM indicators i
+                    WHERE i.dataset_id = d.id AND i.deleted_at IS NULL) AS indicator_count
             FROM datasets d
             LEFT JOIN categories c ON d.category_id = c.id
             LEFT JOIN sources s ON d.primary_source_id = s.id
@@ -153,7 +154,7 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
             SELECT i.id, i.code, i.name_en, i.name_ar,
                    i.unit_en, i.unit_ar, i.unit_symbol, i.decimals
             FROM indicators i
-            WHERE i.dataset_id = $1
+            WHERE i.dataset_id = $1 AND i.deleted_at IS NULL
             ORDER BY i.sort_order, i.name_en
         """, row["id"])
 
@@ -164,6 +165,7 @@ async def get_dataset(request: Request, slug: str, lang: Literal["en", "ar"] = Q
             JOIN indicators i ON o.indicator_id = i.id
             JOIN source_documents sd ON o.source_document_id = sd.id
             WHERE i.dataset_id = $1
+              AND i.deleted_at IS NULL AND o.deleted_at IS NULL
               AND sd.document_url IS NOT NULL
               AND sd.document_url != ''
             LIMIT 1
@@ -231,6 +233,7 @@ async def get_dataset_geographies(
             JOIN indicators i ON o.indicator_id = i.id
             JOIN geographies g ON o.geography_code = g.code
             WHERE i.dataset_id = $1 AND o.is_latest = TRUE
+              AND o.deleted_at IS NULL AND i.deleted_at IS NULL
             ORDER BY g.level, g.name_en
         """, ds["id"])
 
